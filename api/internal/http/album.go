@@ -1,4 +1,4 @@
-package main
+package http
 
 import (
 	"encoding/json"
@@ -23,8 +23,8 @@ func registerAlbumRoutes(r *mux.Router) {
 	r.HandleFunc("/albums", createAlbum).
 		Methods("POST")
 
-	r.HandleFunc("/albums/{id:[0-9]+}", updateAlbum).
-		Methods("PUT")
+	r.HandleFunc("/albums/{id:[0-9]+}", patchAlbum).
+		Methods("PATCH")
 
 	r.HandleFunc("/albums/{id:[0-9]+}", deleteAlbum).
 		Methods("DELETE")
@@ -161,8 +161,76 @@ func createAlbum(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func updateAlbum(w http.ResponseWriter, r *http.Request) {
-	w.WriteHeader(http.StatusNotImplemented)
+func patchAlbum(w http.ResponseWriter, r *http.Request) {
+	// validate id
+	idVar, ok := mux.Vars(r)["id"]
+	if !ok {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte(fmt.Sprintf("missing /albums/{id} path variable in request path %s", r.URL.Path)))
+		return
+	}
+
+	id, err := strconv.Atoi(idVar)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte(fmt.Sprintf("id %s is not an integer", idVar)))
+		return
+	}
+
+	// connect to db
+	db, err := db.GetDB()
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(fmt.Errorf("failed to get db: %w", err).Error()))
+		return
+	}
+
+	// get album
+	album := model.Album{AlbumID: int32(id)}
+	err = db.First(&album).Error
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		w.WriteHeader(http.StatusNotFound)
+		w.Write([]byte(fmt.Sprintf("album %d not found", id)))
+		return
+	} else if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(fmt.Errorf("failed to get album: %w", err).Error()))
+		return
+	}
+
+	// decode patch
+	patch := model.Album{}
+	err = json.NewDecoder(r.Body).Decode(&patch)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte(fmt.Errorf("failed to decode album: %w", err).Error()))
+		return
+	}
+
+	// patch album
+	err = db.Model(&album).Updates(patch).Error
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(fmt.Errorf("failed to patch album: %w", err).Error()))
+		return
+	}
+
+	// return patched album
+	content, err := json.Marshal(album)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(fmt.Errorf("failed to marshal album: %w", err).Error()))
+		return
+	}
+
+	w.Header().Set("Content-Length", fmt.Sprint(len(content)))
+	w.Header().Set("Content-Type", "application/json")
+	_, err = w.Write(content)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(fmt.Errorf("failed to write album: %w", err).Error()))
+		return
+	}
 }
 
 func deleteAlbum(w http.ResponseWriter, r *http.Request) {
