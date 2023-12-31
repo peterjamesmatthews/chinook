@@ -29,16 +29,11 @@ func GetTestHandler(t *testing.T) http.Handler {
 	var handler http.Handler = router
 
 	if testChinook == nil {
-		chinook, err := db.GetSQLiteInMemory()
+		var err error
+		testChinook, err = db.GetSQLite("/Users/pjm/Repositories/chinook/api/testdata/Chinook.sqlite") // TODO get path from testdata
 		if err != nil {
 			t.Fatalf("failed to get sqlite database: %v", err)
 		}
-		err = db.SeedTestDatabaseWithChinook(t, chinook)
-		if err != nil {
-			t.Fatalf("failed to seed test database: %v", err)
-		}
-
-		testChinook = chinook
 	}
 
 	handler = WrapInTransaction(t, router)

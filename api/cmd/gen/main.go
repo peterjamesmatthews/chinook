@@ -1,7 +1,9 @@
 package main
 
 import (
+	"fmt"
 	"log"
+	"os"
 
 	"gorm.io/gen"
 	"pjm.dev/chinook/internal/db"
@@ -15,7 +17,15 @@ func main() {
 			gen.WithQueryInterface,
 	})
 
-	db, err := db.GetMySQLFromEnvironment()
+	// TODO move me to somewhere else
+	rootPassword, ok := os.LookupEnv("MYSQL_ROOT_PASSWORD")
+	if !ok {
+		log.Fatal("environment variable MYSQL_ROOT_PASSWORD not set")
+	}
+
+	dsn := fmt.Sprintf("root:%s@tcp(localhost:3306)/Chinook", rootPassword)
+
+	db, err := db.GetMySQL(dsn)
 	if err != nil {
 		log.Fatal(err)
 	}
