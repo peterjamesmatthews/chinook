@@ -3,9 +3,8 @@ package main
 import (
 	"log"
 
-	"gorm.io/driver/mysql"
 	"gorm.io/gen"
-	"gorm.io/gorm"
+	"pjm.dev/chinook/internal/db"
 )
 
 func main() {
@@ -16,7 +15,7 @@ func main() {
 			gen.WithQueryInterface,
 	})
 
-	db, err := gorm.Open(mysql.Open("root:pwd@tcp(127.0.0.1:3306)/Chinook"))
+	db, err := db.GetMySQLFromEnvironment()
 	if err != nil {
 		log.Fatal(err)
 	}
