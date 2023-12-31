@@ -9,7 +9,6 @@ import (
 
 	"github.com/gorilla/mux"
 	"gorm.io/gorm"
-	"pjm.dev/chinook/internal/db"
 	"pjm.dev/chinook/internal/db/model"
 )
 
@@ -31,34 +30,27 @@ func registerAlbumRoutes(r *mux.Router) {
 }
 
 func getAlbums(w http.ResponseWriter, r *http.Request) {
-	db, err := db.GetDB()
+	// get chinook from context
+	chinook, err := GetChinookFromContext(r.Context())
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte(fmt.Errorf("failed to get db: %w", err).Error()))
+		w.Write([]byte(fmt.Errorf("failed to get database: %w", err).Error()))
 		return
 	}
 
+	// get albums
 	albums := []model.Album{}
-	err = db.Find(&albums).Error
+	err = chinook.Find(&albums).Error
 	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte(fmt.Errorf("failed to get albums: %w", err).Error()))
 		return
 	}
 
-	content, err := json.Marshal(albums)
-	if err != nil {
+	// respond with albums
+	if err := WriteJSONToResponse(w, albums); err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte(fmt.Errorf("failed to marshal albums: %w", err).Error()))
-		return
-	}
-
-	w.Header().Set("Content-Length", fmt.Sprint(len(content)))
-	w.Header().Set("Content-Type", "application/json")
-	_, err = w.Write(content)
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte(fmt.Errorf("failed to write albums: %w", err).Error()))
+		w.Write([]byte(fmt.Errorf("failed to write albums to response: %w", err).Error()))
 		return
 	}
 }
@@ -79,16 +71,17 @@ func getAlbum(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// get album
-	db, err := db.GetDB()
+	// get chinook from context
+	chinook, err := GetChinookFromContext(r.Context())
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte(fmt.Errorf("failed to get db: %w", err).Error()))
+		w.Write([]byte(fmt.Errorf("failed to get database: %w", err).Error()))
 		return
 	}
 
+	// get album
 	album := model.Album{AlbumID: int32(id)}
-	err = db.First(&album).Error
+	err = chinook.First(&album).Error
 	if errors.Is(err, gorm.ErrRecordNotFound) {
 		w.WriteHeader(http.StatusNotFound)
 		w.Write([]byte(fmt.Sprintf("album %d not found", id)))
@@ -99,21 +92,10 @@ func getAlbum(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// return album
-	content, err := json.Marshal(album)
-	if err != nil {
+	// respond with album
+	if err := WriteJSONToResponse(w, album); err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte(fmt.Errorf("failed to marshal album: %w", err).Error()))
-		return
-	}
-
-	w.Header().Set("Content-Length", fmt.Sprint(len(content)))
-	w.Header().Set("Content-Type", "application/json")
-	_, err = w.Write(content)
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte(fmt.Errorf("failed to write album: %w", err).Error()))
-		return
+		w.Write([]byte(fmt.Errorf("failed to write album to response: %w", err).Error()))
 	}
 }
 
@@ -127,38 +109,28 @@ func createAlbum(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// connect to db
-	db, err := db.GetDB()
+	// get chinook from context
+	chinook, err := GetChinookFromContext(r.Context())
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte(fmt.Errorf("failed to get db: %w", err).Error()))
+		w.Write([]byte(fmt.Errorf("failed to get database: %w", err).Error()))
 		return
 	}
 
 	// create album
-	err = db.Create(&album).Error
+	err = chinook.Create(&album).Error
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte(fmt.Errorf("failed to create album: %w", err).Error()))
 		return
 	}
 
-	// return album
-	content, err := json.Marshal(album)
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte(fmt.Errorf("failed to marshal album: %w", err).Error()))
-		return
+	// respond with created album
+	if err := WriteJSONToResponse(w, album); err != nil {
+		w.Write([]byte(fmt.Errorf("failed to write created album to response: %w", err).Error()))
 	}
 
-	w.Header().Set("Content-Length", fmt.Sprint(len(content)))
-	w.Header().Set("Content-Type", "application/json")
-	_, err = w.Write(content)
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte(fmt.Errorf("failed to write album: %w", err).Error()))
-		return
-	}
+	w.WriteHeader(http.StatusCreated)
 }
 
 func patchAlbum(w http.ResponseWriter, r *http.Request) {
@@ -177,17 +149,17 @@ func patchAlbum(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// connect to db
-	db, err := db.GetDB()
+	// get chinook from context
+	chinook, err := GetChinookFromContext(r.Context())
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte(fmt.Errorf("failed to get db: %w", err).Error()))
+		w.Write([]byte(fmt.Errorf("failed to get database: %w", err).Error()))
 		return
 	}
 
 	// get album
 	album := model.Album{AlbumID: int32(id)}
-	err = db.First(&album).Error
+	err = chinook.First(&album).Error
 	if errors.Is(err, gorm.ErrRecordNotFound) {
 		w.WriteHeader(http.StatusNotFound)
 		w.Write([]byte(fmt.Sprintf("album %d not found", id)))
@@ -208,28 +180,16 @@ func patchAlbum(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// patch album
-	err = db.Model(&album).Updates(patch).Error
+	err = chinook.Model(&album).Updates(patch).Error
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte(fmt.Errorf("failed to patch album: %w", err).Error()))
 		return
 	}
 
-	// return patched album
-	content, err := json.Marshal(album)
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte(fmt.Errorf("failed to marshal album: %w", err).Error()))
-		return
-	}
-
-	w.Header().Set("Content-Length", fmt.Sprint(len(content)))
-	w.Header().Set("Content-Type", "application/json")
-	_, err = w.Write(content)
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte(fmt.Errorf("failed to write album: %w", err).Error()))
-		return
+	// respond with patched album
+	if err := WriteJSONToResponse(w, album); err != nil {
+		w.Write([]byte(fmt.Errorf("failed to write patched album to response: %w", err).Error()))
 	}
 }
 
@@ -249,20 +209,25 @@ func deleteAlbum(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// connect to db
-	db, err := db.GetDB()
+	// get chinook from context
+	chinook, err := GetChinookFromContext(r.Context())
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte(fmt.Errorf("failed to get db: %w", err).Error()))
+		w.Write([]byte(fmt.Errorf("failed to get database: %w", err).Error()))
 		return
 	}
 
 	// delete album
 	album := model.Album{AlbumID: int32(id)}
-	err = db.Delete(&album).Error
+	err = chinook.Delete(&album).Error
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte(fmt.Errorf("failed to delete album: %w", err).Error()))
 		return
+	}
+
+	// respond with deleted album
+	if err := WriteJSONToResponse(w, album); err != nil {
+		w.Write([]byte(fmt.Errorf("failed to write deleted album to response: %w", err).Error()))
 	}
 }
