@@ -217,8 +217,15 @@ func deleteAlbum(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// delete album
+	// get album
 	album := model.Album{AlbumID: int32(id)}
+	if err := chinook.First(&album).Error; err != nil {
+		w.WriteHeader(http.StatusNotFound)
+		w.Write([]byte(fmt.Sprintf("album %d not found", id)))
+		return
+	}
+
+	// delete album
 	err = chinook.Delete(&album).Error
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
