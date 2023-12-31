@@ -60,14 +60,14 @@ func getAlbum(w http.ResponseWriter, r *http.Request) {
 	idVar, ok := mux.Vars(r)["id"]
 	if !ok {
 		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte(fmt.Sprintf("missing /albums/{id} path variable in request path %s", r.URL.Path)))
+		w.Write([]byte(fmt.Sprintf("/albums/{id} path variable missing in request path %s", r.URL.Path)))
 		return
 	}
 
 	id, err := strconv.Atoi(idVar)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte(fmt.Sprintf("id %s is not an integer", idVar)))
+		w.Write([]byte(fmt.Sprintf("/albums/{id} path variable {%s} is not an integer", idVar)))
 		return
 	}
 
@@ -138,7 +138,7 @@ func patchAlbum(w http.ResponseWriter, r *http.Request) {
 	idVar, ok := mux.Vars(r)["id"]
 	if !ok {
 		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte(fmt.Sprintf("missing /albums/{id} path variable in request path %s", r.URL.Path)))
+		w.Write([]byte(fmt.Sprintf("/albums/{id} path variable missing from request path %s", r.URL.Path)))
 		return
 	}
 
@@ -198,7 +198,7 @@ func deleteAlbum(w http.ResponseWriter, r *http.Request) {
 	idVar, ok := mux.Vars(r)["id"]
 	if !ok {
 		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte(fmt.Sprintf("missing /albums/{id} path variable in request path %s", r.URL.Path)))
+		w.Write([]byte(fmt.Sprintf("/albums/{id} path variable missing from request path %s", r.URL.Path)))
 		return
 	}
 
