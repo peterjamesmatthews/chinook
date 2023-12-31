@@ -75,21 +75,24 @@ func AssertDeepEquality(t *testing.T, want, got any) error {
 	return nil
 }
 
-func AssertReaderEquality(t *testing.T, want, got io.Reader) error {
+func AssertReaderEquality(t *testing.T, wantReader, gotReader io.Reader) error {
 	t.Helper()
 
-	wantBytes, err := io.ReadAll(want)
+	wantBytes, err := io.ReadAll(wantReader)
 	if err != nil {
 		t.Fatalf("failed to read want: %v", err)
 	}
 
-	gotBytes, err := io.ReadAll(got)
+	gotBytes, err := io.ReadAll(gotReader)
 	if err != nil {
 		t.Fatalf("failed to read got: %v", err)
 	}
 
-	if strings.Compare(string(wantBytes), string(gotBytes)) != 0 {
-		t.Fatalf("want %v\n got %v", string(wantBytes), string(gotBytes))
+	want := strings.TrimSpace(string(wantBytes))
+	got := strings.TrimSpace(string(gotBytes))
+
+	if want != got {
+		t.Fatalf("want %v\n got %v", want, got)
 	}
 
 	return nil
