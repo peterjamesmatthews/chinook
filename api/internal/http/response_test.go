@@ -10,17 +10,17 @@ import (
 	"testing"
 )
 
-// AssertSoftResponseEquality compares two responses, want and got, and returns
+// assertSoftResponseEquality compares two responses, want and got, and returns
 // and error if any field of got is not equal to the corresponding field of
 // want.
 //
 // The comparison is "soft" by the fact that if a field of want is the zero
 // value for that type, then the corresponding field of got is allowed to be
 // any value.
-func AssertSoftResponseEquality(t *testing.T, want, got *http.Response) error {
+func assertSoftResponseEquality(t *testing.T, want, got *http.Response) error {
 	t.Helper()
 
-	if err := AssertNilParity(t, want, got); err != nil {
+	if err := assertNilParity(t, want, got); err != nil {
 		return fmt.Errorf("want & got do not have nil parity\n%w", err)
 	}
 
@@ -29,19 +29,19 @@ func AssertSoftResponseEquality(t *testing.T, want, got *http.Response) error {
 	}
 
 	if want.StatusCode != 0 {
-		if err := AssertDeepEquality(t, want.StatusCode, got.StatusCode); err != nil {
+		if err := assertDeepEquality(t, want.StatusCode, got.StatusCode); err != nil {
 			return fmt.Errorf("status code mismatch\n%w", err)
 		}
 	}
 
 	if want.Header != nil {
-		if err := AssertDeepEquality(t, want.Header, got.Header); err != nil {
+		if err := assertDeepEquality(t, want.Header, got.Header); err != nil {
 			return fmt.Errorf("header mismatch\n%w", err)
 		}
 	}
 
 	if want.Body != nil {
-		if err := AssertReaderEquality(t, want.Body, got.Body); err != nil {
+		if err := assertReaderEquality(t, want.Body, got.Body); err != nil {
 			return fmt.Errorf("body mismatch\n%w", err)
 		}
 	}
@@ -49,9 +49,9 @@ func AssertSoftResponseEquality(t *testing.T, want, got *http.Response) error {
 	return nil
 }
 
-// AssertNilParity compares two values, want and got, and returns an error if
+// assertNilParity compares two values, want and got, and returns an error if
 // one is nil and the other is not.
-func AssertNilParity(t *testing.T, want, got any) error {
+func assertNilParity(t *testing.T, want, got any) error {
 	t.Helper()
 
 	if want == nil && got != nil {
@@ -64,7 +64,7 @@ func AssertNilParity(t *testing.T, want, got any) error {
 	return nil
 }
 
-func AssertDeepEquality(t *testing.T, want, got any) error {
+func assertDeepEquality(t *testing.T, want, got any) error {
 	t.Helper()
 
 	equal := reflect.DeepEqual(want, got)
@@ -75,7 +75,7 @@ func AssertDeepEquality(t *testing.T, want, got any) error {
 	return nil
 }
 
-func AssertReaderEquality(t *testing.T, wantReader, gotReader io.Reader) error {
+func assertReaderEquality(t *testing.T, wantReader, gotReader io.Reader) error {
 	t.Helper()
 
 	wantBytes, err := io.ReadAll(wantReader)
@@ -98,7 +98,7 @@ func AssertReaderEquality(t *testing.T, wantReader, gotReader io.Reader) error {
 	return nil
 }
 
-func AssertSoftEquality(t *testing.T, want, got any) error {
+func assertSoftEquality(t *testing.T, want, got any) error {
 	t.Helper()
 
 	// TODO want == nil isn't safe, figure this out

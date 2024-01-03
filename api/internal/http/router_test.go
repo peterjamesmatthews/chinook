@@ -17,13 +17,13 @@ import (
 // GetTestHandler will reuse testChinook.
 var testChinook *gorm.DB
 
-// GetTestHandler returns a http.Handler that can be used for testing.
+// getTestHandler returns a http.Handler that can be used for testing.
 //
 // The handler...
 //   - contains all routes registered by RegisterChinookRoutes.
 //   - has a seeded chinook database in the context.
 //   - operates in a transaction that's rolled back after the request is handled.
-func GetTestHandler(t *testing.T) http.Handler {
+func getTestHandler(t *testing.T) http.Handler {
 	router := mux.NewRouter()
 	chinookHTTP.RegisterChinookRoutes(router)
 	var handler http.Handler = router
@@ -36,19 +36,19 @@ func GetTestHandler(t *testing.T) http.Handler {
 		}
 	}
 
-	handler = WrapInTransaction(t, router)
+	handler = wrapInTransaction(t, router)
 	handler = chinookHTTP.WrapWithChinookInContext(handler, testChinook)
 	return handler
 }
 
-// WrapInTransaction wraps a handler that was previously wrapped with
+// wrapInTransaction wraps a handler that was previously wrapped with
 // chinookHTTP.WrapWithChinookInContext in a transaction.
 //
 // The transaction begins before calling handler.ServeHTTP and rolls back after.
 //
 // This is useful for testing handlers that modify the database, so that
 // different tests do not interfere with each other.
-func WrapInTransaction(t *testing.T, handler http.Handler) http.Handler {
+func wrapInTransaction(t *testing.T, handler http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		chinook, err := chinookHTTP.GetChinookFromContext(r.Context())
 		if err != nil {

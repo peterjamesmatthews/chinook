@@ -11,7 +11,7 @@ import (
 )
 
 func TestGetAlbums(t *testing.T) {
-	handler := GetTestHandler(t)
+	handler := getTestHandler(t)
 
 	tests := []struct {
 		name     string
@@ -38,7 +38,7 @@ func TestGetAlbums(t *testing.T) {
 			handler.ServeHTTP(recorder, test.request)
 			response := recorder.Result()
 
-			if err := AssertSoftResponseEquality(t, test.response, response); err != nil {
+			if err := assertSoftResponseEquality(t, test.response, response); err != nil {
 				t.Errorf("response mismatch\n%v", err)
 			}
 		})
@@ -46,7 +46,7 @@ func TestGetAlbums(t *testing.T) {
 }
 
 func TestGetAlbum(t *testing.T) {
-	handler := GetTestHandler(t)
+	handler := getTestHandler(t)
 
 	tests := []struct {
 		name     string
@@ -75,7 +75,7 @@ func TestGetAlbum(t *testing.T) {
 			handler.ServeHTTP(recorder, test.request)
 			response := recorder.Result()
 
-			if err := AssertSoftResponseEquality(t, test.response, response); err != nil {
+			if err := assertSoftResponseEquality(t, test.response, response); err != nil {
 				t.Errorf("response mismatch\n%v", err)
 			}
 		})
@@ -83,7 +83,7 @@ func TestGetAlbum(t *testing.T) {
 }
 
 func TestCreateAlbum(t *testing.T) {
-	handler := GetTestHandler(t)
+	handler := getTestHandler(t)
 
 	tests := []struct {
 		name     string
@@ -116,7 +116,7 @@ func TestCreateAlbum(t *testing.T) {
 			handler.ServeHTTP(recorder, test.request)
 			response := recorder.Result()
 
-			if err := AssertSoftResponseEquality(t, test.response, response); err != nil {
+			if err := assertSoftResponseEquality(t, test.response, response); err != nil {
 				t.Errorf("response mismatch\n%v", err)
 			}
 		})
@@ -124,7 +124,7 @@ func TestCreateAlbum(t *testing.T) {
 }
 
 func TestPatchAlbum(t *testing.T) {
-	handler := GetTestHandler(t)
+	handler := getTestHandler(t)
 
 	tests := []struct {
 		name     string
@@ -157,7 +157,7 @@ func TestPatchAlbum(t *testing.T) {
 			handler.ServeHTTP(recorder, test.request)
 			response := recorder.Result()
 
-			if err := AssertSoftResponseEquality(t, test.response, response); err != nil {
+			if err := assertSoftResponseEquality(t, test.response, response); err != nil {
 				t.Errorf("response mismatch\n%v", err)
 			}
 		})
@@ -165,7 +165,7 @@ func TestPatchAlbum(t *testing.T) {
 }
 
 func TestDeleteAlbum(t *testing.T) {
-	handler := GetTestHandler(t)
+	handler := getTestHandler(t)
 
 	tests := []struct {
 		name     string
@@ -194,7 +194,7 @@ func TestDeleteAlbum(t *testing.T) {
 			handler.ServeHTTP(recorder, test.request)
 			response := recorder.Result()
 
-			if err := AssertSoftResponseEquality(t, test.response, response); err != nil {
+			if err := assertSoftResponseEquality(t, test.response, response); err != nil {
 				t.Errorf("response mismatch\n%v", err)
 			}
 		})
