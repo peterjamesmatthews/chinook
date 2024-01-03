@@ -5,58 +5,58 @@ import (
 )
 
 func RegisterChinookRoutes(r *mux.Router) {
-	registerAlbumRoutes(r)
-	registerArtistRoutes(r)
-	registerCustomerRoutes(r)
+	registerAlbumsRoutes(r)
+	registerArtistsRoutes(r)
+	registerCustomersRoutes(r)
 }
 
-func registerAlbumRoutes(r *mux.Router) {
-	r.HandleFunc("/albums", getAlbums).
+func registerAlbumsRoutes(r *mux.Router) {
+	r.HandleFunc("/albums", handleGetAlbums).
 		Methods("GET")
 
-	r.HandleFunc("/albums/{id:[0-9]+}", getAlbum).
+	r.HandleFunc("/albums/{id:[0-9]+}", handleGetAlbum).
 		Methods("GET")
 
-	r.HandleFunc("/albums", createAlbum).
+	r.HandleFunc("/albums", handleCreateAlbum).
 		Methods("POST")
 
-	r.HandleFunc("/albums/{id:[0-9]+}", patchAlbum).
+	r.HandleFunc("/albums/{id:[0-9]+}", handlePatchAlbum).
 		Methods("PATCH")
 
-	r.HandleFunc("/albums/{id:[0-9]+}", deleteAlbum).
+	r.HandleFunc("/albums/{id:[0-9]+}", handleDeleteAlbum).
 		Methods("DELETE")
 }
 
-func registerArtistRoutes(r *mux.Router) {
-	r.HandleFunc("/artists", getArtists).
+func registerArtistsRoutes(r *mux.Router) {
+	r.HandleFunc("/artists", handleGetArtists).
 		Methods("GET")
 
-	r.HandleFunc("/artists/{id:[0-9]+}", getArtist).
+	r.HandleFunc("/artists/{id:[0-9]+}", handleGetArtist).
 		Methods("GET")
 
-	r.HandleFunc("/artists", createArtist).
+	r.HandleFunc("/artists", handleCreateArtist).
 		Methods("POST")
 
-	r.HandleFunc("/artists/{id:[0-9]+}", patchArtist).
+	r.HandleFunc("/artists/{id:[0-9]+}", handlePatchArtist).
 		Methods("PATCH")
 
-	r.HandleFunc("/artists/{id:[0-9]+}", deleteArtist).
+	r.HandleFunc("/artists/{id:[0-9]+}", handleDeleteArtist).
 		Methods("DELETE")
 }
 
-func registerCustomerRoutes(r *mux.Router) {
-	r.HandleFunc("/customers", getCustomers).
+func registerCustomersRoutes(r *mux.Router) {
+	r.HandleFunc("/customers", handleGetCustomers).
 		Methods("GET")
 
-	r.HandleFunc("/customers/{id:[0-9]+}", getCustomer).
+	r.HandleFunc("/customers/{id:[0-9]+}", handleGetCustomer).
 		Methods("GET")
 
-	r.HandleFunc("/customers", createCustomer).
+	r.HandleFunc("/customers", handleCreateCustomer).
 		Methods("POST")
 
-	r.HandleFunc("/customers/{id:[0-9]+}", patchCustomer).
+	r.HandleFunc("/customers/{id:[0-9]+}", handlePatchCustomer).
 		Methods("PATCH")
 
-	r.HandleFunc("/customers/{id:[0-9]+}", deleteCustomer).
+	r.HandleFunc("/customers/{id:[0-9]+}", handleDeleteCustomer).
 		Methods("DELETE")
 }

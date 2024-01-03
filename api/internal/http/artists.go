@@ -12,7 +12,7 @@ import (
 	"pjm.dev/chinook/internal/db/model"
 )
 
-func getArtists(w http.ResponseWriter, r *http.Request) {
+func handleGetArtists(w http.ResponseWriter, r *http.Request) {
 	// get chinook from context
 	chinook, err := handleGettingChinookFromContext(w, r)
 	if err != nil {
@@ -32,7 +32,7 @@ func getArtists(w http.ResponseWriter, r *http.Request) {
 	handleWritingJSONToResponse(w, artists)
 }
 
-func getArtist(w http.ResponseWriter, r *http.Request) {
+func handleGetArtist(w http.ResponseWriter, r *http.Request) {
 	// validate id
 	idVar, ok := mux.Vars(r)["id"]
 	if !ok {
@@ -71,7 +71,7 @@ func getArtist(w http.ResponseWriter, r *http.Request) {
 	handleWritingJSONToResponse(w, artist)
 }
 
-func createArtist(w http.ResponseWriter, r *http.Request) {
+func handleCreateArtist(w http.ResponseWriter, r *http.Request) {
 	// validate album
 	artist := model.Artist{}
 	err := json.NewDecoder(r.Body).Decode(&artist)
@@ -101,7 +101,7 @@ func createArtist(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func patchArtist(w http.ResponseWriter, r *http.Request) {
+func handlePatchArtist(w http.ResponseWriter, r *http.Request) {
 	// validate id
 	idVar, ok := mux.Vars(r)["id"]
 	if !ok {
@@ -156,7 +156,7 @@ func patchArtist(w http.ResponseWriter, r *http.Request) {
 	handleWritingJSONToResponse(w, artist)
 }
 
-func deleteArtist(w http.ResponseWriter, r *http.Request) {
+func handleDeleteArtist(w http.ResponseWriter, r *http.Request) {
 	// validate id
 	idVar, ok := mux.Vars(r)["id"]
 	if !ok {

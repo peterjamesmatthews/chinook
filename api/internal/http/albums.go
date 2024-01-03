@@ -12,7 +12,7 @@ import (
 	"pjm.dev/chinook/internal/db/model"
 )
 
-func getAlbums(w http.ResponseWriter, r *http.Request) {
+func handleGetAlbums(w http.ResponseWriter, r *http.Request) {
 	// get chinook from context
 	chinook, err := handleGettingChinookFromContext(w, r)
 	if err != nil {
@@ -32,7 +32,7 @@ func getAlbums(w http.ResponseWriter, r *http.Request) {
 	handleWritingJSONToResponse(w, albums)
 }
 
-func getAlbum(w http.ResponseWriter, r *http.Request) {
+func handleGetAlbum(w http.ResponseWriter, r *http.Request) {
 	// validate id
 	idVar, ok := mux.Vars(r)["id"]
 	if !ok {
@@ -71,7 +71,7 @@ func getAlbum(w http.ResponseWriter, r *http.Request) {
 	handleWritingJSONToResponse(w, album)
 }
 
-func createAlbum(w http.ResponseWriter, r *http.Request) {
+func handleCreateAlbum(w http.ResponseWriter, r *http.Request) {
 	// validate album
 	album := model.Album{}
 	err := json.NewDecoder(r.Body).Decode(&album)
@@ -99,7 +99,7 @@ func createAlbum(w http.ResponseWriter, r *http.Request) {
 	handleWritingJSONToResponse(w, album)
 }
 
-func patchAlbum(w http.ResponseWriter, r *http.Request) {
+func handlePatchAlbum(w http.ResponseWriter, r *http.Request) {
 	// validate id
 	idVar, ok := mux.Vars(r)["id"]
 	if !ok {
@@ -155,7 +155,7 @@ func patchAlbum(w http.ResponseWriter, r *http.Request) {
 	handleWritingJSONToResponse(w, album)
 }
 
-func deleteAlbum(w http.ResponseWriter, r *http.Request) {
+func handleDeleteAlbum(w http.ResponseWriter, r *http.Request) {
 	// validate id
 	idVar, ok := mux.Vars(r)["id"]
 	if !ok {

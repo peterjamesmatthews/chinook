@@ -12,7 +12,7 @@ import (
 	"pjm.dev/chinook/internal/db/model"
 )
 
-func getCustomers(w http.ResponseWriter, r *http.Request) {
+func handleGetCustomers(w http.ResponseWriter, r *http.Request) {
 	// get chinook from context
 	chinook, err := handleGettingChinookFromContext(w, r)
 	if err != nil {
@@ -32,7 +32,7 @@ func getCustomers(w http.ResponseWriter, r *http.Request) {
 	handleWritingJSONToResponse(w, customers)
 }
 
-func getCustomer(w http.ResponseWriter, r *http.Request) {
+func handleGetCustomer(w http.ResponseWriter, r *http.Request) {
 	// validate id
 	idVar, ok := mux.Vars(r)["id"]
 	if !ok {
@@ -67,7 +67,7 @@ func getCustomer(w http.ResponseWriter, r *http.Request) {
 	handleWritingJSONToResponse(w, customer)
 }
 
-func createCustomer(w http.ResponseWriter, r *http.Request) {
+func handleCreateCustomer(w http.ResponseWriter, r *http.Request) {
 	// validate customer
 	customer := model.Customer{}
 	err := json.NewDecoder(r.Body).Decode(&customer)
@@ -95,7 +95,7 @@ func createCustomer(w http.ResponseWriter, r *http.Request) {
 	handleWritingJSONToResponse(w, customer)
 }
 
-func patchCustomer(w http.ResponseWriter, r *http.Request) {
+func handlePatchCustomer(w http.ResponseWriter, r *http.Request) {
 	// validate id
 	idVar, ok := mux.Vars(r)["id"]
 	if !ok {
@@ -150,7 +150,7 @@ func patchCustomer(w http.ResponseWriter, r *http.Request) {
 	handleWritingJSONToResponse(w, customer)
 }
 
-func deleteCustomer(w http.ResponseWriter, r *http.Request) {
+func handleDeleteCustomer(w http.ResponseWriter, r *http.Request) {
 	// validate id
 	idVar, ok := mux.Vars(r)["id"]
 	if !ok {
