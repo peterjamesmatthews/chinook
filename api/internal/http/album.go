@@ -96,11 +96,7 @@ func createAlbum(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// respond with created album
-	if err = handleWritingJSONToResponse(w, album); err != nil {
-		return
-	}
-
-	w.WriteHeader(http.StatusCreated)
+	handleWritingJSONToResponse(w, album)
 }
 
 func patchAlbum(w http.ResponseWriter, r *http.Request) {
