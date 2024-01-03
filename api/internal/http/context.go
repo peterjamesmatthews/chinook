@@ -52,3 +52,22 @@ func GetChinookFromContext(ctx context.Context) (*gorm.DB, error) {
 func GetContextWithChinook(ctx context.Context, db *gorm.DB) context.Context {
 	return context.WithValue(ctx, chinook, db)
 }
+
+// handleGettingChinookFromContext is a helper function that gets the chinook
+// database from the context and writes any errors to the response.
+//
+//	chinook, err := handleGettingChinookFromContext(w, r)
+//	if err != nil {
+//		return
+//	}
+func handleGettingChinookFromContext(w http.ResponseWriter, r *http.Request) (*gorm.DB, error) {
+	chinook, err := GetChinookFromContext(r.Context())
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(fmt.Errorf("failed to get database\n%w", err).Error()))
+		return nil, err
+	}
+
+	// do something with chinook
+	return chinook, nil
+}
