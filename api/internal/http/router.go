@@ -7,6 +7,7 @@ import (
 func RegisterChinookRoutes(r *mux.Router) {
 	registerAlbumRoutes(r)
 	registerArtistRoutes(r)
+	registerCustomerRoutes(r)
 }
 
 func registerAlbumRoutes(r *mux.Router) {
@@ -40,5 +41,22 @@ func registerArtistRoutes(r *mux.Router) {
 		Methods("PATCH")
 
 	r.HandleFunc("/artists/{id:[0-9]+}", deleteArtist).
+		Methods("DELETE")
+}
+
+func registerCustomerRoutes(r *mux.Router) {
+	r.HandleFunc("/customers", getCustomers).
+		Methods("GET")
+
+	r.HandleFunc("/customers/{id:[0-9]+}", getCustomer).
+		Methods("GET")
+
+	r.HandleFunc("/customers", createCustomer).
+		Methods("POST")
+
+	r.HandleFunc("/customers/{id:[0-9]+}", patchCustomer).
+		Methods("PATCH")
+
+	r.HandleFunc("/customers/{id:[0-9]+}", deleteCustomer).
 		Methods("DELETE")
 }
