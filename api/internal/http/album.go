@@ -12,23 +12,6 @@ import (
 	"pjm.dev/chinook/internal/db/model"
 )
 
-func registerAlbumRoutes(r *mux.Router) {
-	r.HandleFunc("/albums", getAlbums).
-		Methods("GET")
-
-	r.HandleFunc("/albums/{id:[0-9]+}", getAlbum).
-		Methods("GET")
-
-	r.HandleFunc("/albums", createAlbum).
-		Methods("POST")
-
-	r.HandleFunc("/albums/{id:[0-9]+}", patchAlbum).
-		Methods("PATCH")
-
-	r.HandleFunc("/albums/{id:[0-9]+}", deleteAlbum).
-		Methods("DELETE")
-}
-
 func getAlbums(w http.ResponseWriter, r *http.Request) {
 	// get chinook from context
 	chinook, err := handleGettingChinookFromContext(w, r)
