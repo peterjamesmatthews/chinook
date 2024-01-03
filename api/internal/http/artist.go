@@ -99,8 +99,6 @@ func createArtist(w http.ResponseWriter, r *http.Request) {
 	if err = handleWritingJSONToResponse(w, artist); err != nil {
 		return
 	}
-
-	w.WriteHeader(http.StatusCreated)
 }
 
 func patchArtist(w http.ResponseWriter, r *http.Request) {
