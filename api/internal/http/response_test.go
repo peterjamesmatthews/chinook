@@ -41,10 +41,12 @@ func assertSoftResponseEquality(t *testing.T, want, got *http.Response) error {
 	}
 
 	if want.Body != nil {
-		if err := assertReaderEquality(t, want.Body, got.Body); err != nil {
+		if err := assertTrimmedReaderEquality(t, want.Body, got.Body); err != nil {
 			return fmt.Errorf("body mismatch\n%w", err)
 		}
 	}
+
+	// TODO check other fields of http.Response
 
 	return nil
 }
@@ -75,7 +77,7 @@ func assertDeepEquality(t *testing.T, want, got any) error {
 	return nil
 }
 
-func assertReaderEquality(t *testing.T, wantReader, gotReader io.Reader) error {
+func assertTrimmedReaderEquality(t *testing.T, wantReader, gotReader io.Reader) error {
 	t.Helper()
 
 	wantBytes, err := io.ReadAll(wantReader)
