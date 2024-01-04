@@ -7,6 +7,7 @@ import (
 	"net/http/httptest"
 	"testing"
 
+	chinookHTTP "pjm.dev/chinook/internal/http"
 	"pjm.dev/chinook/testdata"
 )
 
@@ -38,7 +39,7 @@ func TestGetAlbums(t *testing.T) {
 			handler.ServeHTTP(recorder, test.request)
 			response := recorder.Result()
 
-			if err := assertSoftResponseEquality(t, test.response, response); err != nil {
+			if err := chinookHTTP.AssertSoftResponseEquality(t, test.response, response); err != nil {
 				t.Errorf("response mismatch\n%v", err)
 			}
 		})
@@ -75,7 +76,7 @@ func TestGetAlbum(t *testing.T) {
 			handler.ServeHTTP(recorder, test.request)
 			response := recorder.Result()
 
-			if err := assertSoftResponseEquality(t, test.response, response); err != nil {
+			if err := chinookHTTP.AssertSoftResponseEquality(t, test.response, response); err != nil {
 				t.Errorf("response mismatch\n%v", err)
 			}
 		})
@@ -116,7 +117,7 @@ func TestCreateAlbum(t *testing.T) {
 			handler.ServeHTTP(recorder, test.request)
 			response := recorder.Result()
 
-			if err := assertSoftResponseEquality(t, test.response, response); err != nil {
+			if err := chinookHTTP.AssertSoftResponseEquality(t, test.response, response); err != nil {
 				t.Errorf("response mismatch\n%v", err)
 			}
 		})
@@ -157,7 +158,7 @@ func TestPatchAlbum(t *testing.T) {
 			handler.ServeHTTP(recorder, test.request)
 			response := recorder.Result()
 
-			if err := assertSoftResponseEquality(t, test.response, response); err != nil {
+			if err := chinookHTTP.AssertSoftResponseEquality(t, test.response, response); err != nil {
 				t.Errorf("response mismatch\n%v", err)
 			}
 		})
@@ -194,7 +195,7 @@ func TestDeleteAlbum(t *testing.T) {
 			handler.ServeHTTP(recorder, test.request)
 			response := recorder.Result()
 
-			if err := assertSoftResponseEquality(t, test.response, response); err != nil {
+			if err := chinookHTTP.AssertSoftResponseEquality(t, test.response, response); err != nil {
 				t.Errorf("response mismatch\n%v", err)
 			}
 		})

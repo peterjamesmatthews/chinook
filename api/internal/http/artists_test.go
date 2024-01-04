@@ -7,6 +7,7 @@ import (
 	"strings"
 	"testing"
 
+	chinookHTTP "pjm.dev/chinook/internal/http"
 	"pjm.dev/chinook/testdata"
 )
 
@@ -38,7 +39,7 @@ func TestGetArtists(t *testing.T) {
 			handler.ServeHTTP(recorder, test.request)
 			response := recorder.Result()
 
-			if err := assertSoftResponseEquality(t, test.response, response); err != nil {
+			if err := chinookHTTP.AssertSoftResponseEquality(t, test.response, response); err != nil {
 				t.Errorf("response mismatch\n%v", err)
 			}
 		})
@@ -73,7 +74,7 @@ func TestGetArtist(t *testing.T) {
 			handler.ServeHTTP(recorder, test.request)
 			response := recorder.Result()
 
-			if err := assertSoftResponseEquality(t, test.response, response); err != nil {
+			if err := chinookHTTP.AssertSoftResponseEquality(t, test.response, response); err != nil {
 				t.Errorf("response mismatch\n%v", err)
 			}
 		})
@@ -108,7 +109,7 @@ func TestCreateArtist(t *testing.T) {
 			handler.ServeHTTP(recorder, test.request)
 			response := recorder.Result()
 
-			if err := assertSoftResponseEquality(t, test.response, response); err != nil {
+			if err := chinookHTTP.AssertSoftResponseEquality(t, test.response, response); err != nil {
 				t.Errorf("response mismatch\n%v", err)
 			}
 		})
@@ -143,7 +144,7 @@ func TestPatchArtist(t *testing.T) {
 			handler.ServeHTTP(recorder, test.request)
 			response := recorder.Result()
 
-			if err := assertSoftResponseEquality(t, test.response, response); err != nil {
+			if err := chinookHTTP.AssertSoftResponseEquality(t, test.response, response); err != nil {
 				t.Errorf("response mismatch\n%v", err)
 			}
 		})
@@ -178,7 +179,7 @@ func TestDeleteArtist(t *testing.T) {
 			handler.ServeHTTP(recorder, test.request)
 			response := recorder.Result()
 
-			if err := assertSoftResponseEquality(t, test.response, response); err != nil {
+			if err := chinookHTTP.AssertSoftResponseEquality(t, test.response, response); err != nil {
 				t.Errorf("response mismatch\n%v", err)
 			}
 		})

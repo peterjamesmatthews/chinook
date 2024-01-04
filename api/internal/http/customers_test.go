@@ -7,6 +7,7 @@ import (
 	"strings"
 	"testing"
 
+	chinookHTTP "pjm.dev/chinook/internal/http"
 	"pjm.dev/chinook/testdata"
 )
 
@@ -38,7 +39,7 @@ func TestGetCustomers(t *testing.T) {
 			handler.ServeHTTP(recorder, test.request)
 			response := recorder.Result()
 
-			if err := assertSoftResponseEquality(t, test.response, response); err != nil {
+			if err := chinookHTTP.AssertSoftResponseEquality(t, test.response, response); err != nil {
 				t.Errorf("response mismatch\n%v", err)
 			}
 		})
@@ -73,7 +74,7 @@ func TestGetCustomer(t *testing.T) {
 			handler.ServeHTTP(recorder, test.request)
 			response := recorder.Result()
 
-			if err := assertSoftResponseEquality(t, test.response, response); err != nil {
+			if err := chinookHTTP.AssertSoftResponseEquality(t, test.response, response); err != nil {
 				t.Errorf("response mismatch\n%v", err)
 			}
 		})
@@ -108,7 +109,7 @@ func TestCreateCustomer(t *testing.T) {
 			handler.ServeHTTP(recorder, test.request)
 			response := recorder.Result()
 
-			if err := assertSoftResponseEquality(t, test.response, response); err != nil {
+			if err := chinookHTTP.AssertSoftResponseEquality(t, test.response, response); err != nil {
 				t.Errorf("response mismatch\n%v", err)
 			}
 		})
@@ -143,7 +144,7 @@ func TestPatchCustomer(t *testing.T) {
 			handler.ServeHTTP(recorder, test.request)
 			response := recorder.Result()
 
-			if err := assertSoftResponseEquality(t, test.response, response); err != nil {
+			if err := chinookHTTP.AssertSoftResponseEquality(t, test.response, response); err != nil {
 				t.Errorf("response mismatch\n%v", err)
 			}
 		})
@@ -174,7 +175,7 @@ func TestDeleteCustomer(t *testing.T) {
 			handler.ServeHTTP(recorder, test.request)
 			response := recorder.Result()
 
-			if err := assertSoftResponseEquality(t, test.response, response); err != nil {
+			if err := chinookHTTP.AssertSoftResponseEquality(t, test.response, response); err != nil {
 				t.Errorf("response mismatch\n%v", err)
 			}
 		})
