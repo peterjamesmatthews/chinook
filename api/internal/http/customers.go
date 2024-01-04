@@ -29,7 +29,7 @@ func handleGetCustomers(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// respond with customers
-	handleWritingJSONToResponse(w, customers)
+	HandleWritingJSONToResponse(w, customers)
 }
 
 func handleGetCustomer(w http.ResponseWriter, r *http.Request) {
@@ -64,7 +64,7 @@ func handleGetCustomer(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	// respond with customer
-	handleWritingJSONToResponse(w, customer)
+	HandleWritingJSONToResponse(w, customer)
 }
 
 func handleCreateCustomer(w http.ResponseWriter, r *http.Request) {
@@ -92,7 +92,7 @@ func handleCreateCustomer(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// respond with customer
-	handleWritingJSONToResponse(w, customer)
+	HandleWritingJSONToResponse(w, customer)
 }
 
 func handlePatchCustomer(w http.ResponseWriter, r *http.Request) {
@@ -147,7 +147,7 @@ func handlePatchCustomer(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// respond with customer
-	handleWritingJSONToResponse(w, customer)
+	HandleWritingJSONToResponse(w, customer)
 }
 
 func handleDeleteCustomer(w http.ResponseWriter, r *http.Request) {
@@ -193,5 +193,5 @@ func handleDeleteCustomer(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// respond with deleted customer
-	handleWritingJSONToResponse(w, customer)
+	HandleWritingJSONToResponse(w, customer)
 }

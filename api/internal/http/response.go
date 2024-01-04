@@ -36,10 +36,10 @@ func WriteJSONToResponse(w http.ResponseWriter, payload any) error {
 	return nil
 }
 
-// handleWritingJSONToResponse is a helper function that writes the payload to
+// HandleWritingJSONToResponse is a helper function that writes the payload to
 // the response and writes any errors to the response.
 //
-//	if err := handleWritingJSONToResponse(w, payload); err != nil {
+//	if err := HandleWritingJSONToResponse(w, payload); err != nil {
 //		return
 //	}
 //
@@ -47,9 +47,9 @@ func WriteJSONToResponse(w http.ResponseWriter, payload any) error {
 //
 //	func handler(w http.ResponseWriter, r *http.Request) {
 //		/* rest of handler */
-//		handleWritingJSONToResponse(w, payload) // ignore error
+//		HandleWritingJSONToResponse(w, payload) // ignore error
 //	}
-func handleWritingJSONToResponse(w http.ResponseWriter, payload any) error {
+func HandleWritingJSONToResponse(w http.ResponseWriter, payload any) error {
 	if err := WriteJSONToResponse(w, payload); err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte(fmt.Errorf("failed to write payload to response\n%w", err).Error()))

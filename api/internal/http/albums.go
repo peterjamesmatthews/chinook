@@ -29,7 +29,7 @@ func handleGetAlbums(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// respond with albums
-	handleWritingJSONToResponse(w, albums)
+	HandleWritingJSONToResponse(w, albums)
 }
 
 func handleGetAlbum(w http.ResponseWriter, r *http.Request) {
@@ -68,7 +68,7 @@ func handleGetAlbum(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// respond with album
-	handleWritingJSONToResponse(w, album)
+	HandleWritingJSONToResponse(w, album)
 }
 
 func handleCreateAlbum(w http.ResponseWriter, r *http.Request) {
@@ -96,7 +96,7 @@ func handleCreateAlbum(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// respond with created album
-	handleWritingJSONToResponse(w, album)
+	HandleWritingJSONToResponse(w, album)
 }
 
 func handlePatchAlbum(w http.ResponseWriter, r *http.Request) {
@@ -152,7 +152,7 @@ func handlePatchAlbum(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// respond with patched album
-	handleWritingJSONToResponse(w, album)
+	HandleWritingJSONToResponse(w, album)
 }
 
 func handleDeleteAlbum(w http.ResponseWriter, r *http.Request) {
@@ -194,5 +194,5 @@ func handleDeleteAlbum(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// respond with deleted album
-	handleWritingJSONToResponse(w, album)
+	HandleWritingJSONToResponse(w, album)
 }

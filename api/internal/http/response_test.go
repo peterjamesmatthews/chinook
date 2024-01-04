@@ -1,118 +1,121 @@
-package http
+package http_test
 
 import (
-	"errors"
 	"fmt"
 	"io"
 	"net/http"
-	"reflect"
+	"net/http/httptest"
 	"strings"
 	"testing"
+
+	chinookHTTP "pjm.dev/chinook/internal/http"
 )
 
-// AssertSoftResponseEquality compares two responses, want and got, and returns
-// and error if any field of got is not equal to the corresponding field of
-// want.
-//
-// The comparison is "soft" by the fact that if a field of want is the zero
-// value for that type, then the corresponding field of got is allowed to be
-// any value.
-func AssertSoftResponseEquality(t *testing.T, want, got *http.Response) error {
-	t.Helper()
-
-	if err := AssertNilParity(t, want, got); err != nil {
-		return fmt.Errorf("want & got do not have nil parity\n%w", err)
+func TestWriteJSONToResponse(t *testing.T) {
+	tests := []struct {
+		name    string
+		payload any
+		want    *http.Response
+		err     error
+	}{
+		{
+			name:    "happy path",
+			payload: "hello world",
+			want: &http.Response{
+				StatusCode: http.StatusOK,
+				Header: http.Header{
+					"Content-Length": []string{"14"},
+					"Content-Type":   []string{"application/json"},
+				},
+				Body: io.NopCloser(strings.NewReader(`"hello world"`)),
+			},
+		},
+		{
+			name:    "doesn't escape html",
+			payload: "Foo & Bar",
+			want: &http.Response{
+				StatusCode: http.StatusOK,
+				Header: http.Header{
+					"Content-Length": []string{"12"},
+					"Content-Type":   []string{"application/json"},
+				},
+				Body: io.NopCloser(strings.NewReader(`"Foo & Bar"`)),
+			},
+		},
+		{
+			name:    "error marshalling payload",
+			payload: func() {},
+			err:     fmt.Errorf("failed to marshal payload\njson: unsupported type: func()"),
+		},
 	}
 
-	if want == nil { // got is nil since we already checked for nil parity
-		return nil
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			w := httptest.NewRecorder()
+			err := chinookHTTP.WriteJSONToResponse(w, test.payload)
+			got := w.Result()
+
+			if err != nil && err.Error() != test.err.Error() {
+				t.Errorf("unexpected error\n got = %v\nwant %v", err, test.err)
+			}
+			err = chinookHTTP.AssertSoftResponseEquality(t, test.want, got)
+			if err != nil {
+				t.Error(fmt.Errorf("response mismatch\n%w", err))
+			}
+		})
 	}
-
-	if want.StatusCode != 0 {
-		if err := AssertDeepEquality(t, want.StatusCode, got.StatusCode); err != nil {
-			return fmt.Errorf("status code mismatch\n%w", err)
-		}
-	}
-
-	if want.Header != nil {
-		if err := AssertDeepEquality(t, want.Header, got.Header); err != nil {
-			return fmt.Errorf("header mismatch\n%w", err)
-		}
-	}
-
-	if want.Body != nil {
-		if err := AssertTrimmedReaderEquality(t, want.Body, got.Body); err != nil {
-			return fmt.Errorf("body mismatch\n%w", err)
-		}
-	}
-
-	// TODO check other fields of http.Response
-
-	return nil
 }
 
-// AssertNilParity compares two values, want and got, and returns an error if
-// one is nil and the other is not.
-func AssertNilParity(t *testing.T, want, got any) error {
-	t.Helper()
-
-	if want == nil && got != nil {
-		return errors.New("want is nil, but got is not")
-	}
-	if got == nil && want != nil {
-		return errors.New("got is nil, but want is not")
-	}
-
-	return nil
-}
-
-func AssertDeepEquality(t *testing.T, want, got any) error {
-	t.Helper()
-
-	equal := reflect.DeepEqual(want, got)
-	if !equal {
-		return fmt.Errorf("want %v\n got %v", want, got)
-	}
-
-	return nil
-}
-
-func AssertTrimmedReaderEquality(t *testing.T, wantReader, gotReader io.Reader) error {
-	t.Helper()
-
-	wantBytes, err := io.ReadAll(wantReader)
-	if err != nil {
-		t.Fatalf("failed to read want: %v", err)
+func TestHandleWritingJSONToResponse(t *testing.T) {
+	tests := []struct {
+		name    string
+		payload any
+		want    *http.Response
+		err     error
+	}{
+		{
+			name:    "happy path",
+			payload: "hello world",
+			want: &http.Response{
+				StatusCode: http.StatusOK,
+				Header: http.Header{
+					"Content-Length": []string{"14"},
+					"Content-Type":   []string{"application/json"},
+				},
+				Body: io.NopCloser(strings.NewReader(`"hello world"`)),
+			},
+		},
+		{
+			name:    "error writing payload to response",
+			payload: func() {},
+			want: &http.Response{
+				StatusCode: http.StatusInternalServerError,
+				Header:     http.Header{},
+				Body:       io.NopCloser(strings.NewReader("failed to write payload to response\nfailed to marshal payload\njson: unsupported type: func()")),
+			},
+			err: fmt.Errorf("failed to marshal payload\njson: unsupported type: func()"),
+		},
 	}
 
-	gotBytes, err := io.ReadAll(gotReader)
-	if err != nil {
-		t.Fatalf("failed to read got: %v", err)
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			w := httptest.NewRecorder()
+			gotErr := chinookHTTP.HandleWritingJSONToResponse(w, test.payload)
+			got := w.Result()
+
+			err := chinookHTTP.AssertNilParity(t, test.err, gotErr)
+			if err != nil {
+				t.Error(err)
+			}
+
+			if gotErr != nil && gotErr.Error() != test.err.Error() {
+				t.Errorf("\nunexpected error\n got = %v\nwant %v", gotErr, test.err)
+			}
+
+			gotErr = chinookHTTP.AssertSoftResponseEquality(t, test.want, got)
+			if gotErr != nil {
+				t.Error(fmt.Errorf("response mismatch\n%w", gotErr))
+			}
+		})
 	}
-
-	want := strings.TrimSpace(string(wantBytes))
-	got := strings.TrimSpace(string(gotBytes))
-
-	if want != got {
-		t.Fatalf("want %v\n got %v", want, got)
-	}
-
-	return nil
-}
-
-func AssertSoftEquality(t *testing.T, want, got any) error {
-	t.Helper()
-
-	// TODO want == nil isn't safe, figure this out
-
-	if reflect.ValueOf(want) == reflect.Zero(reflect.TypeOf(want)).Interface() {
-		return nil
-	}
-
-	equal := reflect.DeepEqual(want, got)
-	if !equal {
-		return fmt.Errorf("want %v\n got %v", want, got)
-	}
-
-	return nil
 }

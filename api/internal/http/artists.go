@@ -29,7 +29,7 @@ func handleGetArtists(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// respond with artists
-	handleWritingJSONToResponse(w, artists)
+	HandleWritingJSONToResponse(w, artists)
 }
 
 func handleGetArtist(w http.ResponseWriter, r *http.Request) {
@@ -68,7 +68,7 @@ func handleGetArtist(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// respond with artist
-	handleWritingJSONToResponse(w, artist)
+	HandleWritingJSONToResponse(w, artist)
 }
 
 func handleCreateArtist(w http.ResponseWriter, r *http.Request) {
@@ -96,7 +96,7 @@ func handleCreateArtist(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// respond with artist
-	if err = handleWritingJSONToResponse(w, artist); err != nil {
+	if err = HandleWritingJSONToResponse(w, artist); err != nil {
 		return
 	}
 }
@@ -153,7 +153,7 @@ func handlePatchArtist(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// respond with artist
-	handleWritingJSONToResponse(w, artist)
+	HandleWritingJSONToResponse(w, artist)
 }
 
 func handleDeleteArtist(w http.ResponseWriter, r *http.Request) {
@@ -200,5 +200,5 @@ func handleDeleteArtist(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// respond with artist
-	handleWritingJSONToResponse(w, artist)
+	HandleWritingJSONToResponse(w, artist)
 }
