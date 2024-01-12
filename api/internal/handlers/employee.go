@@ -50,6 +50,10 @@ func handleGetEmployee(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusNotFound)
 		w.Write([]byte(fmt.Sprintf("employee %d not found", id)))
 		return
+	} else if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(fmt.Errorf("failed to get employee %d\n%w", id, err).Error()))
+		return
 	}
 
 	// respond with employee
@@ -144,6 +148,10 @@ func handleDeleteEmployee(w http.ResponseWriter, r *http.Request) {
 	if err = chinook.First(&employee).Error; errors.Is(err, gorm.ErrRecordNotFound) {
 		w.WriteHeader(http.StatusNotFound)
 		w.Write([]byte(fmt.Sprintf("employee %d not found", id)))
+		return
+	} else if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(fmt.Errorf("failed to get employee %d\n%w", id, err).Error()))
 		return
 	}
 
