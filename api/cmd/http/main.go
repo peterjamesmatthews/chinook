@@ -8,7 +8,7 @@ import (
 
 	"github.com/gorilla/mux"
 	"pjm.dev/chinook/internal/db"
-	chinookHTTP "pjm.dev/chinook/internal/http"
+	"pjm.dev/chinook/internal/handlers"
 )
 
 // main creates a chinook router, registers the "/" path to be handled by it,
@@ -18,7 +18,7 @@ func main() {
 	router := mux.NewRouter()
 
 	// register all chinook routes
-	chinookHTTP.RegisterChinookRoutes(router)
+	handlers.RegisterChinookRoutes(router)
 
 	// TODO move me to somewhere else
 	rootPassword, ok := os.LookupEnv("MYSQL_ROOT_PASSWORD")
@@ -35,7 +35,7 @@ func main() {
 	}
 
 	// wrap router with chinook in context
-	handler := chinookHTTP.WrapWithChinookInContext(router, chinook)
+	handler := handlers.WrapWithChinookInContext(router, chinook)
 
 	// start the server
 	http.Handle("/", handler)

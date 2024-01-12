@@ -1,4 +1,4 @@
-package http_test
+package handlers_test
 
 import (
 	"io"
@@ -7,11 +7,11 @@ import (
 	"strings"
 	"testing"
 
-	chinookHTTP "pjm.dev/chinook/internal/http"
+	"pjm.dev/chinook/internal/handlers"
 	"pjm.dev/chinook/testdata"
 )
 
-func TestGetArtists(t *testing.T) {
+func TestGetCustomers(t *testing.T) {
 	handler := getTestHandler(t)
 
 	tests := []struct {
@@ -21,14 +21,14 @@ func TestGetArtists(t *testing.T) {
 	}{
 		{
 			name:    "happy path",
-			request: httptest.NewRequest(http.MethodGet, "/artists", nil),
+			request: httptest.NewRequest(http.MethodGet, "/customers", nil),
 			response: &http.Response{
 				StatusCode: http.StatusOK,
 				Header: http.Header{
 					"Content-Type":   []string{"application/json"},
-					"Content-Length": []string{"13012"},
+					"Content-Length": []string{"15749"},
 				},
-				Body: testdata.OpenElseFatal(t, "/Users/pjm/Repositories/chinook/api/testdata/GetArtists.json"),
+				Body: testdata.OpenElseFatal(t, "/Users/pjm/Repositories/chinook/api/testdata/GetCustomers.json"),
 			},
 		},
 	}
@@ -39,14 +39,14 @@ func TestGetArtists(t *testing.T) {
 			handler.ServeHTTP(recorder, test.request)
 			response := recorder.Result()
 
-			if err := chinookHTTP.AssertSoftResponseEquality(t, test.response, response); err != nil {
+			if err := handlers.AssertSoftResponseEquality(t, test.response, response); err != nil {
 				t.Errorf("response mismatch\n%v", err)
 			}
 		})
 	}
 }
 
-func TestGetArtist(t *testing.T) {
+func TestGetCustomer(t *testing.T) {
 	handler := getTestHandler(t)
 
 	tests := []struct {
@@ -56,14 +56,14 @@ func TestGetArtist(t *testing.T) {
 	}{
 		{
 			name:    "happy path",
-			request: httptest.NewRequest(http.MethodGet, "/artists/237", nil),
+			request: httptest.NewRequest(http.MethodGet, "/customers/42", nil),
 			response: &http.Response{
 				StatusCode: http.StatusOK,
 				Header: http.Header{
 					"Content-Type":   []string{"application/json"},
-					"Content-Length": []string{"65"},
+					"Content-Length": []string{"262"},
 				},
-				Body: io.NopCloser(strings.NewReader(`{"ArtistId":237,"Name":"Berliner Philharmoniker & Hans Rosbaud"}`)),
+				Body: io.NopCloser(strings.NewReader(`{"CustomerId":42,"FirstName":"Wyatt","LastName":"Girard","Company":"","Address":"9, Place Louis Barthou","City":"Bordeaux","State":"","Country":"France","PostalCode":"33000","Phone":"+33 05 56 96 96 96","Fax":"","Email":"wyatt.girard@yahoo.fr","SupportRepId":3}`)),
 			},
 		},
 	}
@@ -74,14 +74,14 @@ func TestGetArtist(t *testing.T) {
 			handler.ServeHTTP(recorder, test.request)
 			response := recorder.Result()
 
-			if err := chinookHTTP.AssertSoftResponseEquality(t, test.response, response); err != nil {
+			if err := handlers.AssertSoftResponseEquality(t, test.response, response); err != nil {
 				t.Errorf("response mismatch\n%v", err)
 			}
 		})
 	}
 }
 
-func TestCreateArtist(t *testing.T) {
+func TestCreateCustomer(t *testing.T) {
 	handler := getTestHandler(t)
 
 	tests := []struct {
@@ -91,14 +91,14 @@ func TestCreateArtist(t *testing.T) {
 	}{
 		{
 			name:    "happy path",
-			request: httptest.NewRequest(http.MethodPost, "/artists", strings.NewReader(`{"Name":"Foo"}`)),
+			request: httptest.NewRequest(http.MethodPost, "/customers", strings.NewReader(`{"FirstName":"Foo","LastName":"Bar","Email":"foobar@example.com"}`)),
 			response: &http.Response{
 				StatusCode: http.StatusOK,
 				Header: http.Header{
 					"Content-Type":   []string{"application/json"},
-					"Content-Length": []string{"30"},
+					"Content-Length": []string{"195"},
 				},
-				Body: io.NopCloser(strings.NewReader(`{"ArtistId":276,"Name":"Foo"}`)),
+				Body: io.NopCloser(strings.NewReader(`{"CustomerId":60,"FirstName":"Foo","LastName":"Bar","Company":"","Address":"","City":"","State":"","Country":"","PostalCode":"","Phone":"","Fax":"","Email":"foobar@example.com","SupportRepId":0}`)),
 			},
 		},
 	}
@@ -109,14 +109,14 @@ func TestCreateArtist(t *testing.T) {
 			handler.ServeHTTP(recorder, test.request)
 			response := recorder.Result()
 
-			if err := chinookHTTP.AssertSoftResponseEquality(t, test.response, response); err != nil {
+			if err := handlers.AssertSoftResponseEquality(t, test.response, response); err != nil {
 				t.Errorf("response mismatch\n%v", err)
 			}
 		})
 	}
 }
 
-func TestPatchArtist(t *testing.T) {
+func TestPatchCustomer(t *testing.T) {
 	handler := getTestHandler(t)
 
 	tests := []struct {
@@ -126,14 +126,14 @@ func TestPatchArtist(t *testing.T) {
 	}{
 		{
 			name:    "happy path",
-			request: httptest.NewRequest(http.MethodPatch, "/artists/237", strings.NewReader(`{"Name":"Bar"}`)),
+			request: httptest.NewRequest(http.MethodPatch, "/customers/42", strings.NewReader(`{"FirstName":"Foo"}`)),
 			response: &http.Response{
 				StatusCode: http.StatusOK,
 				Header: http.Header{
 					"Content-Type":   []string{"application/json"},
-					"Content-Length": []string{"30"},
+					"Content-Length": []string{"260"},
 				},
-				Body: io.NopCloser(strings.NewReader(`{"ArtistId":237,"Name":"Bar"}`)),
+				Body: io.NopCloser(strings.NewReader(`{"CustomerId":42,"FirstName":"Foo","LastName":"Girard","Company":"","Address":"9, Place Louis Barthou","City":"Bordeaux","State":"","Country":"France","PostalCode":"33000","Phone":"+33 05 56 96 96 96","Fax":"","Email":"wyatt.girard@yahoo.fr","SupportRepId":3}`)),
 			},
 		},
 	}
@@ -144,14 +144,14 @@ func TestPatchArtist(t *testing.T) {
 			handler.ServeHTTP(recorder, test.request)
 			response := recorder.Result()
 
-			if err := chinookHTTP.AssertSoftResponseEquality(t, test.response, response); err != nil {
+			if err := handlers.AssertSoftResponseEquality(t, test.response, response); err != nil {
 				t.Errorf("response mismatch\n%v", err)
 			}
 		})
 	}
 }
 
-func TestDeleteArtist(t *testing.T) {
+func TestDeleteCustomer(t *testing.T) {
 	handler := getTestHandler(t)
 
 	tests := []struct {
@@ -161,14 +161,10 @@ func TestDeleteArtist(t *testing.T) {
 	}{
 		{
 			name:    "happy path",
-			request: httptest.NewRequest(http.MethodDelete, "/artists/237", nil),
+			request: httptest.NewRequest(http.MethodDelete, "/customers/42", nil),
 			response: &http.Response{
 				StatusCode: http.StatusOK,
-				Header: http.Header{
-					"Content-Type":   []string{"application/json"},
-					"Content-Length": []string{"65"},
-				},
-				Body: io.NopCloser(strings.NewReader(`{"ArtistId":237,"Name":"Berliner Philharmoniker & Hans Rosbaud"}`)),
+				Body:       io.NopCloser(strings.NewReader(`{"CustomerId":42,"FirstName":"Wyatt","LastName":"Girard","Company":"","Address":"9, Place Louis Barthou","City":"Bordeaux","State":"","Country":"France","PostalCode":"33000","Phone":"+33 05 56 96 96 96","Fax":"","Email":"wyatt.girard@yahoo.fr","SupportRepId":3}`)),
 			},
 		},
 	}
@@ -179,7 +175,7 @@ func TestDeleteArtist(t *testing.T) {
 			handler.ServeHTTP(recorder, test.request)
 			response := recorder.Result()
 
-			if err := chinookHTTP.AssertSoftResponseEquality(t, test.response, response); err != nil {
+			if err := handlers.AssertSoftResponseEquality(t, test.response, response); err != nil {
 				t.Errorf("response mismatch\n%v", err)
 			}
 		})

@@ -1,4 +1,4 @@
-package http
+package handlers
 
 import (
 	"github.com/gorilla/mux"
@@ -8,6 +8,7 @@ func RegisterChinookRoutes(r *mux.Router) {
 	registerAlbumsRoutes(r)
 	registerArtistsRoutes(r)
 	registerCustomersRoutes(r)
+	registerEmployeeRoutes(r)
 }
 
 func registerAlbumsRoutes(r *mux.Router) {
@@ -58,5 +59,22 @@ func registerCustomersRoutes(r *mux.Router) {
 		Methods("PATCH")
 
 	r.HandleFunc("/customers/{id:[0-9]+}", handleDeleteCustomer).
+		Methods("DELETE")
+}
+
+func registerEmployeeRoutes(r *mux.Router) {
+	r.HandleFunc("/employees", handleGetEmployees).
+		Methods("GET")
+
+	r.HandleFunc("/employees/{id:[0-9]+}", handleGetEmployee).
+		Methods("GET")
+
+	r.HandleFunc("/employees", handleCreateEmployee).
+		Methods("POST")
+
+	r.HandleFunc("/employees/{id:[0-9]+}", handlePatchEmployee).
+		Methods("PATCH")
+
+	r.HandleFunc("/employees/{id:[0-9]+}", handleDeleteEmployee).
 		Methods("DELETE")
 }

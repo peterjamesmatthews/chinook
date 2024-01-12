@@ -1,4 +1,4 @@
-package http_test
+package handlers_test
 
 import (
 	"fmt"
@@ -8,7 +8,7 @@ import (
 	"strings"
 	"testing"
 
-	chinookHTTP "pjm.dev/chinook/internal/http"
+	"pjm.dev/chinook/internal/handlers"
 )
 
 func TestWriteJSONToResponse(t *testing.T) {
@@ -52,13 +52,13 @@ func TestWriteJSONToResponse(t *testing.T) {
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
 			w := httptest.NewRecorder()
-			err := chinookHTTP.WriteJSONToResponse(w, test.payload)
+			err := handlers.WriteJSONToResponse(w, test.payload)
 			got := w.Result()
 
 			if err != nil && err.Error() != test.err.Error() {
 				t.Errorf("unexpected error\n got = %v\nwant %v", err, test.err)
 			}
-			err = chinookHTTP.AssertSoftResponseEquality(t, test.want, got)
+			err = handlers.AssertSoftResponseEquality(t, test.want, got)
 			if err != nil {
 				t.Error(fmt.Errorf("response mismatch\n%w", err))
 			}
@@ -100,10 +100,10 @@ func TestHandleWritingJSONToResponse(t *testing.T) {
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
 			w := httptest.NewRecorder()
-			gotErr := chinookHTTP.HandleWritingJSONToResponse(w, test.payload)
+			gotErr := handlers.HandleWritingJSONToResponse(w, test.payload)
 			got := w.Result()
 
-			err := chinookHTTP.AssertNilParity(t, test.err, gotErr)
+			err := handlers.AssertNilParity(t, test.err, gotErr)
 			if err != nil {
 				t.Error(err)
 			}
@@ -112,7 +112,7 @@ func TestHandleWritingJSONToResponse(t *testing.T) {
 				t.Errorf("\nunexpected error\n got = %v\nwant %v", gotErr, test.err)
 			}
 
-			gotErr = chinookHTTP.AssertSoftResponseEquality(t, test.want, got)
+			gotErr = handlers.AssertSoftResponseEquality(t, test.want, got)
 			if gotErr != nil {
 				t.Error(fmt.Errorf("response mismatch\n%w", gotErr))
 			}

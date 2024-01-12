@@ -1,4 +1,4 @@
-package http_test
+package handlers_test
 
 import (
 	"net/http"
@@ -7,7 +7,7 @@ import (
 	"github.com/gorilla/mux"
 	"gorm.io/gorm"
 	"pjm.dev/chinook/internal/db"
-	chinookHTTP "pjm.dev/chinook/internal/http"
+	"pjm.dev/chinook/internal/handlers"
 )
 
 // testChinook is a seeded chinook database that can be used for testing.
@@ -25,7 +25,7 @@ var testChinook *gorm.DB
 //   - operates in a transaction that's rolled back after the request is handled.
 func getTestHandler(t *testing.T) http.Handler {
 	router := mux.NewRouter()
-	chinookHTTP.RegisterChinookRoutes(router)
+	handlers.RegisterChinookRoutes(router)
 	var handler http.Handler = router
 
 	if testChinook == nil {
@@ -37,12 +37,12 @@ func getTestHandler(t *testing.T) http.Handler {
 	}
 
 	handler = wrapInTransaction(t, router)
-	handler = chinookHTTP.WrapWithChinookInContext(handler, testChinook)
+	handler = handlers.WrapWithChinookInContext(handler, testChinook)
 	return handler
 }
 
 // wrapInTransaction wraps a handler that was previously wrapped with
-// chinookHTTP.WrapWithChinookInContext in a transaction.
+// handlers.WrapWithChinookInContext in a transaction.
 //
 // The transaction begins before calling handler.ServeHTTP and rolls back after.
 //
@@ -50,13 +50,13 @@ func getTestHandler(t *testing.T) http.Handler {
 // different tests do not interfere with each other.
 func wrapInTransaction(t *testing.T, handler http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		chinook, err := chinookHTTP.GetChinookFromContext(r.Context())
+		chinook, err := handlers.GetChinookFromContext(r.Context())
 		if err != nil {
 			t.Fatalf("failed to get chinook from context: %v", err)
 		}
 		tx := chinook.Begin()
 		defer tx.Rollback()
-		ctx := chinookHTTP.GetContextWithChinook(r.Context(), tx)
+		ctx := handlers.GetContextWithChinook(r.Context(), tx)
 		handler.ServeHTTP(w, r.WithContext(ctx))
 	})
 }
