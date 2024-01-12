@@ -1,6 +1,8 @@
 package handlers
 
 import (
+	"net/http"
+
 	"github.com/gorilla/mux"
 )
 
@@ -9,72 +11,90 @@ func RegisterChinookRoutes(r *mux.Router) {
 	registerArtistsRoutes(r)
 	registerCustomersRoutes(r)
 	registerEmployeeRoutes(r)
+	registerGenreRoutes(r)
 }
 
 func registerAlbumsRoutes(r *mux.Router) {
 	r.HandleFunc("/albums", handleGetAlbums).
-		Methods("GET")
+		Methods(http.MethodGet)
 
 	r.HandleFunc("/albums/{id:[0-9]+}", handleGetAlbum).
-		Methods("GET")
+		Methods(http.MethodGet)
 
 	r.HandleFunc("/albums", handleCreateAlbum).
-		Methods("POST")
+		Methods(http.MethodPost)
 
 	r.HandleFunc("/albums/{id:[0-9]+}", handlePatchAlbum).
-		Methods("PATCH")
+		Methods(http.MethodPatch)
 
 	r.HandleFunc("/albums/{id:[0-9]+}", handleDeleteAlbum).
-		Methods("DELETE")
+		Methods(http.MethodDelete)
 }
 
 func registerArtistsRoutes(r *mux.Router) {
 	r.HandleFunc("/artists", handleGetArtists).
-		Methods("GET")
+		Methods(http.MethodGet)
 
 	r.HandleFunc("/artists/{id:[0-9]+}", handleGetArtist).
-		Methods("GET")
+		Methods(http.MethodGet)
 
 	r.HandleFunc("/artists", handleCreateArtist).
-		Methods("POST")
+		Methods(http.MethodPost)
 
 	r.HandleFunc("/artists/{id:[0-9]+}", handlePatchArtist).
-		Methods("PATCH")
+		Methods(http.MethodPatch)
 
 	r.HandleFunc("/artists/{id:[0-9]+}", handleDeleteArtist).
-		Methods("DELETE")
+		Methods(http.MethodDelete)
 }
 
 func registerCustomersRoutes(r *mux.Router) {
 	r.HandleFunc("/customers", handleGetCustomers).
-		Methods("GET")
+		Methods(http.MethodGet)
 
 	r.HandleFunc("/customers/{id:[0-9]+}", handleGetCustomer).
-		Methods("GET")
+		Methods(http.MethodGet)
 
 	r.HandleFunc("/customers", handleCreateCustomer).
-		Methods("POST")
+		Methods(http.MethodPost)
 
 	r.HandleFunc("/customers/{id:[0-9]+}", handlePatchCustomer).
-		Methods("PATCH")
+		Methods(http.MethodPatch)
 
 	r.HandleFunc("/customers/{id:[0-9]+}", handleDeleteCustomer).
-		Methods("DELETE")
+		Methods(http.MethodDelete)
 }
 
 func registerEmployeeRoutes(r *mux.Router) {
 	r.HandleFunc("/employees", handleGetEmployees).
-		Methods("GET")
+		Methods(http.MethodGet)
 
 	r.HandleFunc("/employees/{id:[0-9]+}", handleGetEmployee).
-		Methods("GET")
+		Methods(http.MethodGet)
 
 	r.HandleFunc("/employees", handleCreateEmployee).
-		Methods("POST")
+		Methods(http.MethodPost)
 
 	r.HandleFunc("/employees/{id:[0-9]+}", handlePatchEmployee).
-		Methods("PATCH")
+		Methods(http.MethodPatch)
 
 	r.HandleFunc("/employees/{id:[0-9]+}", handleDeleteEmployee).
-		Methods("DELETE")
+		Methods(http.MethodDelete)
+}
+
+func registerGenreRoutes(r *mux.Router) {
+	r.HandleFunc("/genres", handleGetGenres).
+		Methods(http.MethodGet)
+
+	r.HandleFunc("/genres/{id:[0-9]+}", handleGetGenre).
+		Methods(http.MethodGet)
+
+	r.HandleFunc("/genres", handleCreateGenre).
+		Methods(http.MethodPost)
+
+	r.HandleFunc("/genres/{id:[0-9]+}", handlePatchGenre).
+		Methods(http.MethodPatch)
+
+	r.HandleFunc("/genres/{id:[0-9]+}", handleDeleteGenre).
+		Methods(http.MethodDelete)
 }
