@@ -5,9 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
-	"strconv"
 
-	"github.com/gorilla/mux"
 	"gorm.io/gorm"
 	"pjm.dev/chinook/internal/db/model"
 )
@@ -33,18 +31,9 @@ func handleGetAlbums(w http.ResponseWriter, r *http.Request) {
 }
 
 func handleGetAlbum(w http.ResponseWriter, r *http.Request) {
-	// validate id
-	idVar, ok := mux.Vars(r)["id"]
-	if !ok {
-		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte(fmt.Sprintf("/albums/{id} path variable missing in request path %s", r.URL.Path)))
-		return
-	}
-
-	id, err := strconv.Atoi(idVar)
+	// get id from path variable
+	id, err := handleGettingIntFromPathVariable(w, r, "id")
 	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte(fmt.Sprintf("/albums/{id} path variable {%s} is not an integer", idVar)))
 		return
 	}
 
@@ -100,18 +89,9 @@ func handleCreateAlbum(w http.ResponseWriter, r *http.Request) {
 }
 
 func handlePatchAlbum(w http.ResponseWriter, r *http.Request) {
-	// validate id
-	idVar, ok := mux.Vars(r)["id"]
-	if !ok {
-		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte(fmt.Sprintf("/albums/{id} path variable missing from request path %s", r.URL.Path)))
-		return
-	}
-
-	id, err := strconv.Atoi(idVar)
+	// get id from path variable
+	id, err := handleGettingIntFromPathVariable(w, r, "id")
 	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte(fmt.Sprintf("id %s is not an integer", idVar)))
 		return
 	}
 
@@ -156,18 +136,9 @@ func handlePatchAlbum(w http.ResponseWriter, r *http.Request) {
 }
 
 func handleDeleteAlbum(w http.ResponseWriter, r *http.Request) {
-	// validate id
-	idVar, ok := mux.Vars(r)["id"]
-	if !ok {
-		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte(fmt.Sprintf("/albums/{id} path variable missing from request path %s", r.URL.Path)))
-		return
-	}
-
-	id, err := strconv.Atoi(idVar)
+	// get id from path variable
+	id, err := handleGettingIntFromPathVariable(w, r, "id")
 	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte(fmt.Sprintf("id %s is not an integer", idVar)))
 		return
 	}
 
@@ -179,9 +150,14 @@ func handleDeleteAlbum(w http.ResponseWriter, r *http.Request) {
 
 	// get album
 	album := model.Album{AlbumID: int32(id)}
-	if err := chinook.First(&album).Error; err != nil {
+	err = chinook.First(&album).Error
+	if errors.Is(err, gorm.ErrRecordNotFound) {
 		w.WriteHeader(http.StatusNotFound)
 		w.Write([]byte(fmt.Sprintf("album %d not found", id)))
+		return
+	} else if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(fmt.Errorf("failed to get album: %w", err).Error()))
 		return
 	}
 

@@ -68,6 +68,15 @@ func TestGetAlbum(t *testing.T) {
 				))),
 			},
 		},
+		{
+			name:    "not found",
+			request: httptest.NewRequest(http.MethodGet, "/albums/9999", nil),
+			response: &http.Response{
+				StatusCode: http.StatusNotFound,
+				Header:     http.Header{},
+				Body:       io.NopCloser(bytes.NewReader([]byte(`album 9999 not found`))),
+			},
+		},
 	}
 
 	for _, test := range tests {
@@ -107,6 +116,15 @@ func TestCreateAlbum(t *testing.T) {
 				Body: io.NopCloser(bytes.NewReader([]byte(
 					`{"AlbumId":348,"Title":"My Cool Album","ArtistId":152}`,
 				))),
+			},
+		},
+		{
+			name:    "invalid body",
+			request: httptest.NewRequest(http.MethodPost, "/albums", bytes.NewReader([]byte(`Foobar`))),
+			response: &http.Response{
+				StatusCode: http.StatusBadRequest,
+				Header:     http.Header{},
+				Body:       io.NopCloser(bytes.NewReader([]byte(`failed to decode album: invalid character 'F' looking for beginning of value`))),
 			},
 		},
 	}
@@ -150,6 +168,24 @@ func TestPatchAlbum(t *testing.T) {
 				))),
 			},
 		},
+		{
+			name:    "not found",
+			request: httptest.NewRequest(http.MethodPatch, "/albums/9999", nil),
+			response: &http.Response{
+				StatusCode: http.StatusNotFound,
+				Header:     http.Header{},
+				Body:       io.NopCloser(bytes.NewReader([]byte(`album 9999 not found`))),
+			},
+		},
+		{
+			name:    "invalid body",
+			request: httptest.NewRequest(http.MethodPatch, "/albums/243", bytes.NewReader([]byte(`Foobar`))),
+			response: &http.Response{
+				StatusCode: http.StatusBadRequest,
+				Header:     http.Header{},
+				Body:       io.NopCloser(bytes.NewReader([]byte(`failed to decode album: invalid character 'F' looking for beginning of value`))),
+			},
+		},
 	}
 
 	for _, test := range tests {
@@ -185,6 +221,15 @@ func TestDeleteAlbum(t *testing.T) {
 				Body: io.NopCloser(bytes.NewReader([]byte(
 					`{"AlbumId":243,"Title":"The Best Of Van Halen, Vol. I","ArtistId":152}`,
 				))),
+			},
+		},
+		{
+			name:    "not found",
+			request: httptest.NewRequest(http.MethodDelete, "/albums/9999", nil),
+			response: &http.Response{
+				StatusCode: http.StatusNotFound,
+				Header:     http.Header{},
+				Body:       io.NopCloser(bytes.NewReader([]byte(`album 9999 not found`))),
 			},
 		},
 	}
