@@ -8,7 +8,7 @@ import (
 	"testing"
 
 	"pjm.dev/chinook/internal/handlers"
-	"pjm.dev/chinook/testdata"
+	"pjm.dev/chinook/test"
 )
 
 func TestGetArtists(t *testing.T) {
@@ -28,7 +28,7 @@ func TestGetArtists(t *testing.T) {
 					"Content-Type":   []string{"application/json"},
 					"Content-Length": []string{"13012"},
 				},
-				Body: testdata.OpenElseFatal(t, "/Users/pjm/Repositories/chinook/api/testdata/GetArtists.json"),
+				Body: test.OpenElseFatal(t, "/Users/pjm/Repositories/chinook/api/testdata/GetArtists.json"),
 			},
 		},
 	}
