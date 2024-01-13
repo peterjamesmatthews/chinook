@@ -8,7 +8,7 @@ const TableNameGenre = "Genre"
 
 // Genre mapped from table <Genre>
 type Genre struct {
-	GenreID int32  `gorm:"column:GenreId;autoIncrement:true" json:"GenreId"`
+	GenreID int32  `gorm:"column:GenreId;primaryKey;autoIncrement:true" json:"GenreId"`
 	Name    string `gorm:"column:Name" json:"Name"`
 }
 
