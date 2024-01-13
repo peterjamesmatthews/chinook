@@ -28,7 +28,7 @@ func TestGetGenres(t *testing.T) {
 					"Content-Type":   []string{"application/json"},
 					"Content-Length": []string{"842"},
 				},
-				Body: test.OpenElseFatal(t, "/Users/pjm/Repositories/chinook/api/testdata/GetGenres.json"),
+				Body: test.OpenFixture(t, "GetGenres.json"),
 			},
 		},
 	}

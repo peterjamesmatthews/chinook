@@ -28,7 +28,7 @@ func TestGetEmployees(t *testing.T) {
 					"Content-Type":   []string{"application/json"},
 					"Content-Length": []string{"2838"},
 				},
-				Body: test.OpenElseFatal(t, "/Users/pjm/Repositories/chinook/api/testdata/GetEmployees.json"),
+				Body: test.OpenFixture(t, "GetEmployees.json"),
 			},
 		},
 	}

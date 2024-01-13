@@ -28,7 +28,7 @@ func TestGetAlbums(t *testing.T) {
 					"Content-Type":   []string{"application/json"},
 					"Content-Length": []string{"22196"},
 				},
-				Body: test.OpenElseFatal(t, "/Users/pjm/Repositories/chinook/api/testdata/GetAlbums.json"),
+				Body: test.OpenFixture(t, "GetAlbums.json"),
 			},
 		},
 	}

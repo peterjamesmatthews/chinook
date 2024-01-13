@@ -8,6 +8,7 @@ import (
 	"gorm.io/gorm"
 	"pjm.dev/chinook/internal/db"
 	"pjm.dev/chinook/internal/handlers"
+	"pjm.dev/chinook/test"
 )
 
 // testChinook is a seeded chinook database that can be used for testing.
@@ -28,11 +29,14 @@ func getTestHandler(t *testing.T) http.Handler {
 	handlers.RegisterChinookRoutes(router)
 	var handler http.Handler = router
 
-	if testChinook == nil {
+	if testChinook == nil { // initialize testChinook
+		seed := test.OpenFixture(t, "Chinook.sqlite")
+		defer seed.Close()
+
 		var err error
-		testChinook, err = db.GetSQLite("/Users/pjm/Repositories/chinook/api/testdata/Chinook.sqlite") // TODO get path from testdata
+		testChinook, err = db.GetSQLite(seed.Name())
 		if err != nil {
-			t.Fatalf("failed to get sqlite database: %v", err)
+			t.Fatalf("failed to seed testChinook: %v", err)
 		}
 	}
 
