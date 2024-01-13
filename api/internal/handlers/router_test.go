@@ -64,3 +64,67 @@ func wrapInTransaction(t *testing.T, handler http.Handler) http.Handler {
 		handler.ServeHTTP(w, r.WithContext(ctx))
 	})
 }
+
+// unseededTestChinook is an unseeded chinook database that can be used for testing.
+var unseededTestChinook *gorm.DB
+
+type foo func(*testing.T, map[any][]any)
+
+func getFooHandler(t *testing.T) (http.Handler, foo, foo) {
+	router := mux.NewRouter()
+	handlers.RegisterChinookRoutes(router)
+	var handler http.Handler = router
+
+	if unseededTestChinook == nil {
+		var err error
+		unseededTestChinook, err = db.GetSQLite(":memory:")
+		if err != nil {
+			t.Fatalf("failed to get in-memory sqlite db: %v", err)
+		}
+	}
+
+	// create function that will seed the database
+	seedDB := func(t *testing.T, seed map[any][]any) {
+		// migrate schema
+		var models []any
+		for model := range seed {
+			models = append(models, model)
+		}
+
+		if err := unseededTestChinook.AutoMigrate(models...); err != nil {
+			t.Fatalf("failed to migrate schema: %v", err)
+		}
+
+		// insert data
+		for _, records := range seed {
+			if err := unseededTestChinook.Create(records).Error; err != nil {
+				t.Fatalf("failed to insert data: %v", err)
+			}
+		}
+	}
+
+	// create function that will assert the database
+	assertDB := func(t *testing.T, want map[any][]any) {
+
+		// for each model in want
+		for model, wantRecords := range want {
+			// get records from database
+			var gotRecords []any // TODO this should be a slice of model's type
+			if err := unseededTestChinook.Find(&gotRecords).Error; err != nil {
+				t.Fatalf("failed to get records from database: %v", err) // TODO handle no rows
+			}
+
+			// assert that the records match want
+			// TODO need a way to compare wantRecords to gotRecords
+			// ? generic soft unordered equality
+		}
+
+		t.Fatal("not implemented")
+		return
+	}
+
+	handler = wrapInTransaction(t, router)
+	handler = handlers.WrapWithChinookInContext(handler, unseededTestChinook)
+
+	return handler, seedDB, assertDB
+}

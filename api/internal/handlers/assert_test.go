@@ -20,8 +20,15 @@ import (
 func AssertSoftResponseEquality(t *testing.T, want, got *http.Response) error {
 	t.Helper()
 
-	if err := AssertNilParity(t, want, got); err != nil {
-		return fmt.Errorf("want & got do not have nil parity\n%w", err)
+	// errs holds all errors found during assertion
+	var errs []error
+	// err is a running error for each assertion.
+	//
+	// it will be reused as the folded error for return
+	var err error
+
+	if err = AssertNilParity(t, want, got); err != nil {
+		errs = append(errs, err)
 	}
 
 	if want == nil { // got is nil since we already checked for nil parity
@@ -29,26 +36,32 @@ func AssertSoftResponseEquality(t *testing.T, want, got *http.Response) error {
 	}
 
 	if want.StatusCode != 0 {
-		if err := AssertDeepEquality(t, want.StatusCode, got.StatusCode); err != nil {
-			return fmt.Errorf("status code mismatch\n%w", err)
+		if err = AssertDeepEquality(t, want.StatusCode, got.StatusCode); err != nil {
+			errs = append(errs, err)
 		}
 	}
 
 	if want.Header != nil {
-		if err := AssertDeepEquality(t, want.Header, got.Header); err != nil {
-			return fmt.Errorf("header mismatch\n%w", err)
+		if err = AssertDeepEquality(t, want.Header, got.Header); err != nil {
+			errs = append(errs, err)
 		}
 	}
 
 	if want.Body != nil {
-		if err := AssertTrimmedReaderEquality(t, want.Body, got.Body); err != nil {
-			return fmt.Errorf("body mismatch\n%w", err)
+		if err = AssertTrimmedReaderEquality(t, want.Body, got.Body); err != nil {
+			errs = append(errs, err)
 		}
 	}
 
 	// TODO check other fields of http.Response
 
-	return nil
+	err = nil // reset err for folding
+	// fold all errors in errs into err
+	for _, e := range errs {
+		err = fmt.Errorf("%w\n", e)
+	}
+
+	return err
 }
 
 // AssertNilParity compares two values, want and got, and returns an error if
