@@ -1,18 +1,14 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"net/http"
-	"os"
 
 	"github.com/gorilla/mux"
 	"pjm.dev/chinook/internal/db"
 	"pjm.dev/chinook/internal/handlers"
 )
 
-// main creates a chinook router, registers the "/" path to be handled by it,
-// and listens on port 3000.
 func main() {
 	// create a mux router
 	router := mux.NewRouter()
@@ -20,13 +16,11 @@ func main() {
 	// register all chinook routes
 	handlers.RegisterChinookRoutes(router)
 
-	// TODO move me to somewhere else
-	rootPassword, ok := os.LookupEnv("MYSQL_ROOT_PASSWORD")
-	if !ok {
-		log.Fatal("environment variable MYSQL_ROOT_PASSWORD not set")
+	// get dsn that connects to chinook database
+	dsn, err := db.GetDSN()
+	if err != nil {
+		log.Fatalf("failed to get dsn\n%v", err)
 	}
-
-	dsn := fmt.Sprintf("root:%s@tcp(localhost:3306)/Chinook", rootPassword)
 
 	// get a chinook database connection
 	chinook, err := db.GetMySQL(dsn)
