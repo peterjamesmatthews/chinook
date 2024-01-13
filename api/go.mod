@@ -5,7 +5,7 @@ go 1.21.1
 require (
 	gorm.io/driver/mysql v1.5.1-0.20230509030346-3715c134c25b
 	gorm.io/gen v0.3.24
-	gorm.io/gorm v1.25.2-0.20230530020048-26663ab9bf55
+	gorm.io/gorm v1.25.5
 	gorm.io/plugin/dbresolver v1.3.0
 )
 
