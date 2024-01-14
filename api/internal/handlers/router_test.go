@@ -40,19 +40,19 @@ func getTestHandler(t *testing.T) http.Handler {
 		}
 	}
 
-	handler = wrapInTransaction(t, router)
+	handler = wrapInChinookTransaction(t, router)
 	handler = handlers.WrapWithChinookInContext(handler, testChinook)
 	return handler
 }
 
-// wrapInTransaction wraps a handler that was previously wrapped with
+// wrapInChinookTransaction wraps a handler that was previously wrapped with
 // handlers.WrapWithChinookInContext in a transaction.
 //
 // The transaction begins before calling handler.ServeHTTP and rolls back after.
 //
 // This is useful for testing handlers that modify the database, so that
 // different tests do not interfere with each other.
-func wrapInTransaction(t *testing.T, handler http.Handler) http.Handler {
+func wrapInChinookTransaction(t *testing.T, handler http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		chinook, err := handlers.GetChinookFromContext(r.Context())
 		if err != nil {
@@ -81,7 +81,7 @@ func getCrowHandler(t *testing.T) (http.Handler, db.Crow) {
 		}
 	}
 
-	handler = wrapInTransaction(t, router)
+	handler = wrapInChinookTransaction(t, handler)
 	handler = handlers.WrapWithChinookInContext(handler, unseededTestChinook)
 
 	return handler, db.NewCrow(t, unseededTestChinook)

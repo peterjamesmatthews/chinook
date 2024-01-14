@@ -6,18 +6,20 @@ import (
 
 	"gorm.io/gorm"
 	"gorm.io/gorm/schema"
+	"pjm.dev/chinook/util"
 )
 
 type Crow struct {
-	db *gorm.DB
-	t  *testing.T
+	t    *testing.T
+	db   *gorm.DB
+	seed map[any][]any
 }
 
 func NewCrow(t *testing.T, db *gorm.DB) Crow {
-	return Crow{db: db, t: t}
+	return Crow{t: t, db: db}
 }
 
-func (c Crow) Seed(seed map[schema.Tabler][]any) {
+func (c *Crow) Seed(seed map[any][]any) {
 	var models []any
 	var records []any
 	for model, recs := range seed {
@@ -30,41 +32,44 @@ func (c Crow) Seed(seed map[schema.Tabler][]any) {
 	}
 
 	for _, record := range records {
-		if err := c.db.Create(record).Error; err != nil {
+		if err := c.db.Create(util.GetPointerTo(record)).Error; err != nil {
 			c.t.Fatalf("failed to insert data: %v", err)
 		}
 	}
+
+	c.seed = seed
 }
 
-func (c Crow) Assert(want map[schema.Tabler][]any) {
-	// TODO establish a consistent naming for the type of want's key and values
+// Dump returns a map of models to their records in the database.
+func (c Crow) Dump() map[any][]any {
+	dump := make(map[any][]any)
 
-	for table, wantRecords := range want {
-		gotRecordsInterface := reflect.New(reflect.SliceOf(reflect.TypeOf(table).Elem())).Interface()
-		if err := c.db.Table(table.TableName()).Find(gotRecordsInterface).Error; err != nil {
-			c.t.Fatalf("failed to get records from database\n%v", err)
+	// for each model that was seeded
+	for model := range c.seed {
+		// model is a concrete type whose pointer is a schema.Tabler
+		tabler, ok := util.GetPointerTo(model).(schema.Tabler)
+		if !ok {
+			c.t.Fatalf("model %v does not implement schema.Tabler", model)
 		}
 
-		// gotRecords is a pointer to a slice of the correct type
-		// wantRecords is a slice of interface{} that are pointers to the correct type
+		// create pointer to slice on model's concrete type
+		m := reflect.TypeOf(util.GetPointedTo(model)) // m is the concrete type of model (not a pointer)
+		ms := reflect.SliceOf(m)                      // ms is []m
+		records := reflect.New(ms).Interface()        // [records] = any(*[]m)
 
-		// convert gotRecords to a slice of the correct type
-		gotSlice := reflect.ValueOf(gotRecordsInterface).Elem()
-		var gotInterfaces []interface{}
-		for i := 0; i < gotSlice.Len(); i++ {
-			gotInterfaces = append(gotInterfaces, gotSlice.Index(i).Interface())
+		// find records of model from database
+		if err := c.db.Table(tabler.TableName()).Find(records).Error; err != nil {
+			c.t.Fatalf("failed to find records of %v from database\n%v", tabler.TableName(), err)
 		}
 
-		// convert wantRecords to a slice of the correct type
-		var wantRecordsValues []interface{}
-		for _, wantRecord := range wantRecords {
-			// Dereference the pointer to get the value it points to
-			wantRecordsValues = append(wantRecordsValues, reflect.ValueOf(wantRecord).Elem().Interface())
+		// convert [records] to []any(m)
+		models := reflect.ValueOf(records).Elem() // [models] = []m
+		anys := make([]any, models.Len())
+		for i := range anys {
+			anys[i] = models.Index(i).Interface() // [anys[i]] = any(m)
 		}
-
-		// TODO use generic soft unordered equality
-		if !reflect.DeepEqual(gotInterfaces, wantRecordsValues) {
-			c.t.Errorf("got records mismatch\nwant %+v\ngot %+v", wantRecordsValues, gotInterfaces)
-		}
+		dump[util.GetPointedTo(model)] = anys
 	}
+
+	return dump
 }

@@ -4,10 +4,10 @@ import (
 	"io"
 	"net/http"
 	"net/http/httptest"
+	"reflect"
 	"strings"
 	"testing"
 
-	"gorm.io/gorm/schema"
 	"pjm.dev/chinook/internal/db/model"
 	"pjm.dev/chinook/internal/handlers"
 )
@@ -17,18 +17,18 @@ func TestGetGenres(t *testing.T) {
 
 	tests := []struct {
 		name     string
-		seed     map[schema.Tabler][]any
+		seed     map[any][]any
 		request  *http.Request
 		response *http.Response
-		want     map[schema.Tabler][]any
+		want     map[any][]any
 	}{
 		{
 			name: "three genres",
-			seed: map[schema.Tabler][]any{
-				&model.Genre{}: {
-					&model.Genre{Name: "Foo"},
-					&model.Genre{Name: "Bar"},
-					&model.Genre{Name: "Baz"},
+			seed: map[any][]any{
+				model.Genre{}: {
+					model.Genre{Name: "Foo"},
+					model.Genre{Name: "Bar"},
+					model.Genre{Name: "Baz"},
 				},
 			},
 			request: httptest.NewRequest(http.MethodGet, "/genres", nil),
@@ -40,11 +40,33 @@ func TestGetGenres(t *testing.T) {
 				},
 				Body: io.NopCloser(strings.NewReader(`[{"GenreId":1,"Name":"Foo"},{"GenreId":2,"Name":"Bar"},{"GenreId":3,"Name":"Baz"}]`)),
 			},
-			want: map[schema.Tabler][]any{
-				&model.Genre{}: {
-					&model.Genre{GenreID: 1, Name: "Foo"},
-					&model.Genre{GenreID: 2, Name: "Bar"},
-					&model.Genre{GenreID: 3, Name: "Baz"},
+			want: map[any][]any{
+				model.Genre{}: {
+					model.Genre{GenreID: 1, Name: "Foo"},
+					model.Genre{GenreID: 2, Name: "Bar"},
+					model.Genre{GenreID: 3, Name: "Baz"},
+				},
+			},
+		},
+		{
+			name: "one genre",
+			seed: map[any][]any{
+				model.Genre{}: {
+					model.Genre{Name: "Foo"},
+				},
+			},
+			request: httptest.NewRequest(http.MethodGet, "/genres", nil),
+			response: &http.Response{
+				StatusCode: http.StatusOK,
+				Header: http.Header{
+					"Content-Type":   []string{"application/json"},
+					"Content-Length": []string{"27"},
+				},
+				Body: io.NopCloser(strings.NewReader(`[{"GenreId":1,"Name":"Foo"}]`)),
+			},
+			want: map[any][]any{
+				model.Genre{}: {
+					model.Genre{GenreID: 1, Name: "Foo"},
 				},
 			},
 		},
@@ -61,7 +83,12 @@ func TestGetGenres(t *testing.T) {
 				t.Errorf("response mismatch\n%v", err)
 			}
 
-			crow.Assert(test.want)
+			dump := crow.Dump()
+			for model := range test.want {
+				if !reflect.DeepEqual(test.want[model], dump[model]) {
+					t.Errorf("crow mismatch\nwant %v\ngot  %v", test.want[model], dump[model])
+				}
+			}
 		})
 	}
 }
