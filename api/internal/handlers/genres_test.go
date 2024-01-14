@@ -7,27 +7,28 @@ import (
 	"strings"
 	"testing"
 
+	"gorm.io/gorm/schema"
 	"pjm.dev/chinook/internal/db/model"
 	"pjm.dev/chinook/internal/handlers"
 )
 
 func TestGetGenres(t *testing.T) {
-	handler, seed, assert := getFooHandler(t)
+	handler, crow := getCrowHandler(t)
 
 	tests := []struct {
 		name     string
-		seed     map[any][]any
+		seed     map[schema.Tabler][]any
 		request  *http.Request
 		response *http.Response
-		want     map[any][]any
+		want     map[schema.Tabler][]any
 	}{
 		{
 			name: "three genres",
-			seed: map[any][]any{
-				model.Genre{}: []model.Genre{
-					{Name: "Foo"},
-					{Name: "Bar"},
-					{Name: "Baz"},
+			seed: map[schema.Tabler][]any{
+				&model.Genre{}: {
+					&model.Genre{Name: "Foo"},
+					&model.Genre{Name: "Bar"},
+					&model.Genre{Name: "Baz"},
 				},
 			},
 			request: httptest.NewRequest(http.MethodGet, "/genres", nil),
@@ -39,11 +40,11 @@ func TestGetGenres(t *testing.T) {
 				},
 				Body: io.NopCloser(strings.NewReader(`[{"GenreId":1,"Name":"Foo"},{"GenreId":2,"Name":"Bar"},{"GenreId":3,"Name":"Baz"}]`)),
 			},
-			want: map[any][]any{
-				model.Genre{}: []model.Genre{
-					{GenreID: 1, Name: "Foo"},
-					{GenreID: 2, Name: "Bar"},
-					{GenreID: 3, Name: "Baz"},
+			want: map[schema.Tabler][]any{
+				&model.Genre{}: {
+					&model.Genre{GenreID: 1, Name: "Foo"},
+					&model.Genre{GenreID: 2, Name: "Bar"},
+					&model.Genre{GenreID: 3, Name: "Baz"},
 				},
 			},
 		},
@@ -51,7 +52,7 @@ func TestGetGenres(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			seed(t, test.seed)
+			crow.Seed(test.seed)
 
 			recorder := httptest.NewRecorder()
 			handler.ServeHTTP(recorder, test.request)
@@ -60,7 +61,7 @@ func TestGetGenres(t *testing.T) {
 				t.Errorf("response mismatch\n%v", err)
 			}
 
-			assert(t, test.want)
+			crow.Assert(test.want)
 		})
 	}
 }
