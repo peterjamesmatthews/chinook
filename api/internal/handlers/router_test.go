@@ -6,6 +6,7 @@ import (
 
 	"github.com/gorilla/mux"
 	"gorm.io/gorm"
+	"pjm.dev/chinook/internal/crow"
 	"pjm.dev/chinook/internal/db"
 	"pjm.dev/chinook/internal/handlers"
 	"pjm.dev/chinook/test"
@@ -59,19 +60,19 @@ func wrapInChinookTransaction(t *testing.T, handler http.Handler) http.Handler {
 			t.Fatalf("failed to get chinook from context: %v", err)
 		}
 		tx := chinook.Begin()
-		defer tx.Rollback()
 		ctx := handlers.GetContextWithChinook(r.Context(), tx)
 		handler.ServeHTTP(w, r.WithContext(ctx))
+		tx.Rollback()
 	})
 }
 
 // unseededTestChinook is an unseeded chinook database that can be used for testing.
 var unseededTestChinook *gorm.DB
 
-func getCrowHandler(t *testing.T) (http.Handler, db.Crow) {
+func getCrowHandler(t *testing.T) (http.Handler, *crow.Crow) {
 	router := mux.NewRouter()
 	handlers.RegisterChinookRoutes(router)
-	var handler http.Handler = router
+	var h http.Handler = router
 
 	if unseededTestChinook == nil {
 		var err error
@@ -81,8 +82,15 @@ func getCrowHandler(t *testing.T) (http.Handler, db.Crow) {
 		}
 	}
 
-	handler = wrapInChinookTransaction(t, handler)
-	handler = handlers.WrapWithChinookInContext(handler, unseededTestChinook)
+	h, c := crow.WrapInCrow(h, func(r *http.Request) *gorm.DB {
+		db, err := handlers.GetChinookFromContext(r.Context())
+		if err != nil {
+			t.Fatalf("failed to get chinook from context: %v", err)
+		}
+		return db
+	})
+	h = wrapInChinookTransaction(t, h)
+	h = handlers.WrapWithChinookInContext(h, unseededTestChinook)
 
-	return handler, db.NewCrow(t, unseededTestChinook)
+	return h, c
 }

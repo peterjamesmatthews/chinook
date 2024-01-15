@@ -13,7 +13,7 @@ import (
 )
 
 func TestGetGenres(t *testing.T) {
-	handler, crow := getCrowHandler(t)
+	handler, c := getCrowHandler(t)
 
 	tests := []struct {
 		name     string
@@ -60,7 +60,7 @@ func TestGetGenres(t *testing.T) {
 				StatusCode: http.StatusOK,
 				Header: http.Header{
 					"Content-Type":   []string{"application/json"},
-					"Content-Length": []string{"27"},
+					"Content-Length": []string{"29"},
 				},
 				Body: io.NopCloser(strings.NewReader(`[{"GenreId":1,"Name":"Foo"}]`)),
 			},
@@ -74,7 +74,7 @@ func TestGetGenres(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			crow.Seed(test.seed)
+			c.Seed(test.seed)
 
 			recorder := httptest.NewRecorder()
 			handler.ServeHTTP(recorder, test.request)
@@ -83,7 +83,7 @@ func TestGetGenres(t *testing.T) {
 				t.Errorf("response mismatch\n%v", err)
 			}
 
-			dump := crow.Dump()
+			dump := c.Dump()
 			for model := range test.want {
 				if !reflect.DeepEqual(test.want[model], dump[model]) {
 					t.Errorf("crow mismatch\nwant %v\ngot  %v", test.want[model], dump[model])
