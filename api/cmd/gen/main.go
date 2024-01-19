@@ -4,6 +4,7 @@ import (
 	"log"
 
 	"gorm.io/gen"
+
 	"pjm.dev/chinook/internal/db"
 )
 

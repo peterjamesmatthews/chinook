@@ -1,6 +1,8 @@
 package util
 
-import "reflect"
+import (
+	"reflect"
+)
 
 // GetPointerTo takes an interface that may be a pointer to a value and returns an
 // interface that's a pointer to the value.

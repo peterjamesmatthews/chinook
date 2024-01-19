@@ -38,7 +38,11 @@ func TestGetGenres(t *testing.T) {
 					"Content-Type":   []string{"application/json"},
 					"Content-Length": []string{"83"},
 				},
-				Body: io.NopCloser(strings.NewReader(`[{"GenreId":1,"Name":"Foo"},{"GenreId":2,"Name":"Bar"},{"GenreId":3,"Name":"Baz"}]`)),
+				Body: io.NopCloser(
+					strings.NewReader(
+						`[{"GenreId":1,"Name":"Foo"},{"GenreId":2,"Name":"Bar"},{"GenreId":3,"Name":"Baz"}]`,
+					),
+				),
 			},
 			want: map[any][]any{
 				model.Genre{}: {
@@ -137,8 +141,12 @@ func TestCreateGenre(t *testing.T) {
 		response *http.Response
 	}{
 		{
-			name:    "happy path",
-			request: httptest.NewRequest(http.MethodPost, "/genres", strings.NewReader(`{"Name":"Junk"}`)),
+			name: "happy path",
+			request: httptest.NewRequest(
+				http.MethodPost,
+				"/genres",
+				strings.NewReader(`{"Name":"Junk"}`),
+			),
 			response: &http.Response{
 				StatusCode: http.StatusOK,
 				Header: http.Header{
@@ -172,8 +180,12 @@ func TestPatchGenre(t *testing.T) {
 		response *http.Response
 	}{
 		{
-			name:    "happy path",
-			request: httptest.NewRequest(http.MethodPatch, "/genres/22", strings.NewReader(`{"Name":"Junk"}`)),
+			name: "happy path",
+			request: httptest.NewRequest(
+				http.MethodPatch,
+				"/genres/22",
+				strings.NewReader(`{"Name":"Junk"}`),
+			),
 			response: &http.Response{
 				StatusCode: http.StatusOK,
 				Header: http.Header{
