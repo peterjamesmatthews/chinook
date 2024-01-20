@@ -8,7 +8,7 @@ import (
 
 	"gorm.io/gorm"
 
-	"pjm.dev/chinook/internal/db/model"
+	"pjm.dev/chin/internal/db/model"
 )
 
 func handleGetEmployees(w http.ResponseWriter, r *http.Request) {

@@ -6,8 +6,8 @@ import (
 
 	"github.com/gorilla/mux"
 
-	"pjm.dev/chinook/internal/db"
-	"pjm.dev/chinook/internal/handlers"
+	"pjm.dev/chin/internal/db"
+	"pjm.dev/chin/internal/handlers"
 )
 
 func main() {

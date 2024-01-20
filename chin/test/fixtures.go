@@ -5,7 +5,7 @@ import (
 	"path/filepath"
 	"testing"
 
-	"pjm.dev/chinook/internal/meta"
+	"pjm.dev/chin/internal/meta"
 )
 
 // OpenFixture opens the fixture at the path and returns a file descriptor.

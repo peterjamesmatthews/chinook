@@ -7,8 +7,8 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"pjm.dev/chinook/internal/handlers"
-	"pjm.dev/chinook/test"
+	"pjm.dev/chin/internal/handlers"
+	"pjm.dev/chin/test"
 )
 
 func TestGetAlbums(t *testing.T) {

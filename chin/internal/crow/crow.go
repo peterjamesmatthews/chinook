@@ -7,7 +7,7 @@ import (
 	"gorm.io/gorm"
 	"gorm.io/gorm/schema"
 
-	"pjm.dev/chinook/util"
+	"pjm.dev/chin/util"
 )
 
 // Crow is a *gorm.DB seeding and dumping tool.

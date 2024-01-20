@@ -1,4 +1,4 @@
-module pjm.dev/chinook
+module pjm.dev/chin
 
 go 1.21.1
 

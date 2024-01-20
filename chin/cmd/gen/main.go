@@ -5,7 +5,7 @@ import (
 
 	"gorm.io/gen"
 
-	"pjm.dev/chinook/internal/db"
+	"pjm.dev/chin/internal/db"
 )
 
 func main() {

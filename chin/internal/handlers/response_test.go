@@ -8,7 +8,7 @@ import (
 	"strings"
 	"testing"
 
-	"pjm.dev/chinook/internal/handlers"
+	"pjm.dev/chin/internal/handlers"
 )
 
 func TestWriteJSONToResponse(t *testing.T) {

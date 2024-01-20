@@ -7,8 +7,8 @@ import (
 	"strings"
 	"testing"
 
-	"pjm.dev/chinook/internal/handlers"
-	"pjm.dev/chinook/test"
+	"pjm.dev/chin/internal/handlers"
+	"pjm.dev/chin/test"
 )
 
 func TestGetEmployees(t *testing.T) {

@@ -7,10 +7,10 @@ import (
 	"github.com/gorilla/mux"
 	"gorm.io/gorm"
 
-	"pjm.dev/chinook/internal/crow"
-	"pjm.dev/chinook/internal/db"
-	"pjm.dev/chinook/internal/handlers"
-	"pjm.dev/chinook/test"
+	"pjm.dev/chin/internal/crow"
+	"pjm.dev/chin/internal/db"
+	"pjm.dev/chin/internal/handlers"
+	"pjm.dev/chin/test"
 )
 
 // testChinook is a seeded chinook database that can be used for testing.

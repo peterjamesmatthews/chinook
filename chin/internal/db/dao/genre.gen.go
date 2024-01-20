@@ -16,7 +16,7 @@ import (
 
 	"gorm.io/plugin/dbresolver"
 
-	"pjm.dev/chinook/internal/db/model"
+	"pjm.dev/chin/internal/db/model"
 )
 
 func newGenre(db *gorm.DB, opts ...gen.DOOption) genre {
