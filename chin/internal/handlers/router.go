@@ -6,7 +6,7 @@ import (
 	"github.com/gorilla/mux"
 )
 
-func RegisterChinookRoutes(r *mux.Router) {
+func RegisterRoutes(r *mux.Router) {
 	registerAlbumsRoutes(r)
 	registerArtistsRoutes(r)
 	registerCustomersRoutes(r)

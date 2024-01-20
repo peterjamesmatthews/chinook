@@ -12,15 +12,15 @@ import (
 )
 
 func handleGetGenres(w http.ResponseWriter, r *http.Request) {
-	// get chinook from context
-	chinook, err := handleGettingChinookFromContext(w, r)
+	// get nook from context
+	db, err := handleGettingNookFromContext(w, r)
 	if err != nil {
 		return
 	}
 
 	// get genres from database
 	genres := []model.Genre{}
-	if err := chinook.Find(&genres).Error; err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
+	if err := db.Find(&genres).Error; err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte(fmt.Errorf("failed to get genres\n%w", err).Error()))
 	}
@@ -36,15 +36,15 @@ func handleGetGenre(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// get chinook from context
-	chinook, err := handleGettingChinookFromContext(w, r)
+	// get nook from context
+	db, err := handleGettingNookFromContext(w, r)
 	if err != nil {
 		return
 	}
 
 	// get genre from database
 	genre := model.Genre{GenreID: int32(id)}
-	if err := chinook.First(&genre).Error; errors.Is(err, gorm.ErrRecordNotFound) {
+	if err := db.First(&genre).Error; errors.Is(err, gorm.ErrRecordNotFound) {
 		w.WriteHeader(http.StatusNotFound)
 		w.Write([]byte(fmt.Sprintf("genre %d not found", id)))
 		return
@@ -68,14 +68,14 @@ func handleCreateGenre(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// get chinook from context
-	chinook, err := handleGettingChinookFromContext(w, r)
+	// get nook from context
+	db, err := handleGettingNookFromContext(w, r)
 	if err != nil {
 		return
 	}
 
 	// create genre
-	if err := chinook.Create(&genre).Error; err != nil {
+	if err := db.Create(&genre).Error; err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte(fmt.Errorf("failed to create genre\n%w", err).Error()))
 		return
@@ -92,15 +92,15 @@ func handlePatchGenre(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// get chinook from context
-	chinook, err := handleGettingChinookFromContext(w, r)
+	// get nook from context
+	db, err := handleGettingNookFromContext(w, r)
 	if err != nil {
 		return
 	}
 
 	// get genre from database
 	genre := model.Genre{GenreID: int32(id)}
-	if err := chinook.First(&genre).Error; errors.Is(err, gorm.ErrRecordNotFound) {
+	if err := db.First(&genre).Error; errors.Is(err, gorm.ErrRecordNotFound) {
 		w.WriteHeader(http.StatusNotFound)
 		w.Write([]byte(fmt.Sprintf("genre %d not found", id)))
 		return
@@ -119,7 +119,7 @@ func handlePatchGenre(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// patch genre
-	if err := chinook.Model(&genre).Updates(patch).Error; err != nil {
+	if err := db.Model(&genre).Updates(patch).Error; err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte(fmt.Errorf("failed to patch genre %d\n%w", id, err).Error()))
 		return
@@ -136,15 +136,15 @@ func handleDeleteGenre(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// get chinook from context
-	chinook, err := handleGettingChinookFromContext(w, r)
+	// get nook from context
+	db, err := handleGettingNookFromContext(w, r)
 	if err != nil {
 		return
 	}
 
 	// get genre from database
 	genre := model.Genre{GenreID: int32(id)}
-	if err := chinook.First(&genre).Error; errors.Is(err, gorm.ErrRecordNotFound) {
+	if err := db.First(&genre).Error; errors.Is(err, gorm.ErrRecordNotFound) {
 		w.WriteHeader(http.StatusNotFound)
 		w.Write([]byte(fmt.Sprintf("genre %d not found", id)))
 		return
@@ -155,7 +155,7 @@ func handleDeleteGenre(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// delete genre
-	if err := chinook.Delete(&genre).Error; err != nil {
+	if err := db.Delete(&genre).Error; err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte(fmt.Errorf("failed to delete genre %d\n%w", id, err).Error()))
 		return

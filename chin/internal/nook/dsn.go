@@ -5,7 +5,7 @@ import (
 	"os"
 )
 
-// GetDSN returns a MySQL DSN that can be used to connect to the Chinook
+// GetDSN returns a MySQL DSN that can be used to connect to the nook
 // database.
 //
 // # Errors

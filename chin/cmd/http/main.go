@@ -14,23 +14,23 @@ func main() {
 	// create a mux router
 	router := mux.NewRouter()
 
-	// register all chinook routes
-	handlers.RegisterChinookRoutes(router)
+	// register all routes
+	handlers.RegisterRoutes(router)
 
-	// get dsn that connects to chinook database
+	// get dsn that connects to nook
 	dsn, err := nook.GetDSN()
 	if err != nil {
 		log.Fatalf("failed to get dsn\n%v", err)
 	}
 
-	// get a chinook database connection
-	chinook, err := nook.GetMySQL(dsn)
+	// get a db database connection
+	db, err := nook.GetMySQL(dsn)
 	if err != nil {
-		log.Fatalf("failed to get chinook database\n%v", err)
+		log.Fatalf("failed to get nook database with dsn %s\n%v", dsn, err)
 	}
 
-	// wrap router with chinook in context
-	handler := handlers.WrapWithChinookInContext(router, chinook)
+	// wrap router with nook db in context
+	handler := handlers.WrapWithNookInContext(router, db)
 
 	// start the server
 	http.Handle("/", handler)

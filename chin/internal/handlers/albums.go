@@ -12,15 +12,15 @@ import (
 )
 
 func handleGetAlbums(w http.ResponseWriter, r *http.Request) {
-	// get chinook from context
-	chinook, err := handleGettingChinookFromContext(w, r)
+	// get db from context
+	db, err := handleGettingNookFromContext(w, r)
 	if err != nil {
 		return
 	}
 
 	// get albums
 	albums := []model.Album{}
-	err = chinook.Find(&albums).Error
+	err = db.Find(&albums).Error
 	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte(fmt.Errorf("failed to get albums: %w", err).Error()))
@@ -38,15 +38,15 @@ func handleGetAlbum(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// get chinook from context
-	chinook, err := handleGettingChinookFromContext(w, r)
+	// get nook from context
+	db, err := handleGettingNookFromContext(w, r)
 	if err != nil {
 		return
 	}
 
 	// get album
 	album := model.Album{AlbumID: int32(id)}
-	err = chinook.First(&album).Error
+	err = db.First(&album).Error
 	if errors.Is(err, gorm.ErrRecordNotFound) {
 		w.WriteHeader(http.StatusNotFound)
 		w.Write([]byte(fmt.Sprintf("album %d not found", id)))
@@ -71,14 +71,14 @@ func handleCreateAlbum(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// get chinook from context
-	chinook, err := handleGettingChinookFromContext(w, r)
+	// get nook from context
+	db, err := handleGettingNookFromContext(w, r)
 	if err != nil {
 		return
 	}
 
 	// create album
-	err = chinook.Create(&album).Error
+	err = db.Create(&album).Error
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte(fmt.Errorf("failed to create album: %w", err).Error()))
@@ -96,15 +96,15 @@ func handlePatchAlbum(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// get chinook from context
-	chinook, err := handleGettingChinookFromContext(w, r)
+	// get nook from context
+	db, err := handleGettingNookFromContext(w, r)
 	if err != nil {
 		return
 	}
 
 	// get album
 	album := model.Album{AlbumID: int32(id)}
-	err = chinook.First(&album).Error
+	err = db.First(&album).Error
 	if errors.Is(err, gorm.ErrRecordNotFound) {
 		w.WriteHeader(http.StatusNotFound)
 		w.Write([]byte(fmt.Sprintf("album %d not found", id)))
@@ -125,7 +125,7 @@ func handlePatchAlbum(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// patch album
-	err = chinook.Model(&album).Updates(patch).Error
+	err = db.Model(&album).Updates(patch).Error
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte(fmt.Errorf("failed to patch album: %w", err).Error()))
@@ -143,15 +143,15 @@ func handleDeleteAlbum(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// get chinook from context
-	chinook, err := handleGettingChinookFromContext(w, r)
+	// get nook from context
+	db, err := handleGettingNookFromContext(w, r)
 	if err != nil {
 		return
 	}
 
 	// get album
 	album := model.Album{AlbumID: int32(id)}
-	err = chinook.First(&album).Error
+	err = db.First(&album).Error
 	if errors.Is(err, gorm.ErrRecordNotFound) {
 		w.WriteHeader(http.StatusNotFound)
 		w.Write([]byte(fmt.Sprintf("album %d not found", id)))
@@ -163,7 +163,7 @@ func handleDeleteAlbum(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// delete album
-	err = chinook.Delete(&album).Error
+	err = db.Delete(&album).Error
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte(fmt.Errorf("failed to delete album: %w", err).Error()))

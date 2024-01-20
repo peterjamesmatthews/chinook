@@ -13,7 +13,7 @@ import (
 
 var testDB *gorm.DB = &gorm.DB{}
 
-func TestGetChinookFromContext(t *testing.T) {
+func TestGetNookFromContext(t *testing.T) {
 	tests := []struct {
 		name string
 		ctx  context.Context
@@ -22,7 +22,7 @@ func TestGetChinookFromContext(t *testing.T) {
 	}{
 		{
 			name: "happy path",
-			ctx:  context.WithValue(context.Background(), chinook, testDB),
+			ctx:  context.WithValue(context.Background(), nook, testDB),
 			want: testDB,
 			err:  nil,
 		},
@@ -33,16 +33,16 @@ func TestGetChinookFromContext(t *testing.T) {
 			err:  ErrMissingDatabaseInContext,
 		},
 		{
-			name: "unexpected chinook type",
-			ctx:  context.WithValue(context.Background(), chinook, "not a *gorm.DB"),
+			name: "unexpected nook type",
+			ctx:  context.WithValue(context.Background(), nook, "not a *gorm.DB"),
 			want: nil,
-			err:  &ErrUnexpectedChinookType{"not a *gorm.DB"},
+			err:  &ErrUnexpectedNookType{"not a *gorm.DB"},
 		},
 	}
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			got, err := GetChinookFromContext(test.ctx)
+			got, err := GetNookFromContext(test.ctx)
 
 			if got != test.want {
 				t.Errorf("got %v, want %v", got, test.want)
@@ -55,7 +55,7 @@ func TestGetChinookFromContext(t *testing.T) {
 	}
 }
 
-func TestHandleGettingChinookFromContext(t *testing.T) {
+func TestHandleGettingNookFromContext(t *testing.T) {
 	tests := []struct {
 		name     string
 		ctx      context.Context
@@ -65,7 +65,7 @@ func TestHandleGettingChinookFromContext(t *testing.T) {
 	}{
 		{
 			name:     "happy path",
-			ctx:      context.WithValue(context.Background(), chinook, testDB),
+			ctx:      context.WithValue(context.Background(), nook, testDB),
 			want:     testDB,
 			response: http.Response{},
 			err:      nil,
@@ -85,7 +85,7 @@ func TestHandleGettingChinookFromContext(t *testing.T) {
 		t.Run(test.name, func(t *testing.T) {
 			w := httptest.NewRecorder()
 			r, _ := http.NewRequestWithContext(test.ctx, http.MethodGet, "/", nil)
-			got, err := handleGettingChinookFromContext(w, r)
+			got, err := handleGettingNookFromContext(w, r)
 			if got != test.want {
 				t.Errorf("got %v, want %v", got, test.want)
 			}

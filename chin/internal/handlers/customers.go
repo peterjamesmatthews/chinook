@@ -14,15 +14,15 @@ import (
 )
 
 func handleGetCustomers(w http.ResponseWriter, r *http.Request) {
-	// get chinook from context
-	chinook, err := handleGettingChinookFromContext(w, r)
+	// get nook from context
+	db, err := handleGettingNookFromContext(w, r)
 	if err != nil {
 		return
 	}
 
 	// get customers from database
 	customers := []model.Customer{}
-	err = chinook.Find(&customers).Error
+	err = db.Find(&customers).Error
 	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte(fmt.Errorf("failed to get customers: %w", err).Error()))
@@ -47,14 +47,14 @@ func handleGetCustomer(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte(fmt.Sprintf("/customers/{id} path variable {%s} is not an integer", idVar)))
 		return
 	}
-	// get chinook from context
-	chinook, err := handleGettingChinookFromContext(w, r)
+	// get nook from context
+	db, err := handleGettingNookFromContext(w, r)
 	if err != nil {
 		return
 	}
 	// get customer from database
 	customer := model.Customer{CustomerID: int32(id)}
-	err = chinook.First(&customer).Error
+	err = db.First(&customer).Error
 	if errors.Is(err, gorm.ErrRecordNotFound) {
 		w.WriteHeader(http.StatusNotFound)
 		w.Write([]byte(fmt.Sprintf("customer %d not found", id)))
@@ -78,14 +78,14 @@ func handleCreateCustomer(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// get chinook from context
-	chinook, err := handleGettingChinookFromContext(w, r)
+	// get nook from context
+	db, err := handleGettingNookFromContext(w, r)
 	if err != nil {
 		return
 	}
 
 	// create customer
-	err = chinook.Create(&customer).Error
+	err = db.Create(&customer).Error
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte(fmt.Errorf("failed to create customer: %w", err).Error()))
@@ -120,15 +120,15 @@ func handlePatchCustomer(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// get chinook from context
-	chinook, err := handleGettingChinookFromContext(w, r)
+	// get nook from context
+	db, err := handleGettingNookFromContext(w, r)
 	if err != nil {
 		return
 	}
 
 	// get customer
 	customer := model.Customer{CustomerID: int32(id)}
-	err = chinook.First(&customer).Error
+	err = db.First(&customer).Error
 	if errors.Is(err, gorm.ErrRecordNotFound) {
 		w.WriteHeader(http.StatusNotFound)
 		w.Write([]byte(fmt.Sprintf("customer %d not found", id)))
@@ -140,7 +140,7 @@ func handlePatchCustomer(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// patch customer
-	err = chinook.Model(&customer).Updates(patch).Error
+	err = db.Model(&customer).Updates(patch).Error
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte(fmt.Errorf("failed to patch customer: %w", err).Error()))
@@ -166,15 +166,15 @@ func handleDeleteCustomer(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// get chinook from context
-	chinook, err := handleGettingChinookFromContext(w, r)
+	// get nook from context
+	db, err := handleGettingNookFromContext(w, r)
 	if err != nil {
 		return
 	}
 
 	// get customer
 	customer := model.Customer{CustomerID: int32(id)}
-	err = chinook.First(&customer).Error
+	err = db.First(&customer).Error
 	if errors.Is(err, gorm.ErrRecordNotFound) {
 		w.WriteHeader(http.StatusNotFound)
 		w.Write([]byte(fmt.Sprintf("customer %d not found", id)))
@@ -186,7 +186,7 @@ func handleDeleteCustomer(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// delete customer
-	err = chinook.Delete(&customer).Error
+	err = db.Delete(&customer).Error
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte(fmt.Errorf("failed to delete customer: %w", err).Error()))

@@ -14,15 +14,15 @@ import (
 )
 
 func handleGetArtists(w http.ResponseWriter, r *http.Request) {
-	// get chinook from context
-	chinook, err := handleGettingChinookFromContext(w, r)
+	// get nook from context
+	db, err := handleGettingNookFromContext(w, r)
 	if err != nil {
 		return
 	}
 
 	// get artists from database
 	artists := []model.Artist{}
-	err = chinook.Find(&artists).Error
+	err = db.Find(&artists).Error
 	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte(fmt.Errorf("failed to get artists: %w", err).Error()))
@@ -49,15 +49,15 @@ func handleGetArtist(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// get chinook from context
-	chinook, err := handleGettingChinookFromContext(w, r)
+	// get nook from context
+	db, err := handleGettingNookFromContext(w, r)
 	if err != nil {
 		return
 	}
 
 	// get artist from database
 	artist := model.Artist{ArtistID: int32(id)}
-	err = chinook.First(&artist).Error
+	err = db.First(&artist).Error
 	if errors.Is(err, gorm.ErrRecordNotFound) {
 		w.WriteHeader(http.StatusNotFound)
 		w.Write([]byte(fmt.Errorf("artist with id %d not found", id).Error()))
@@ -82,14 +82,14 @@ func handleCreateArtist(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// get chinook from context
-	chinook, err := handleGettingChinookFromContext(w, r)
+	// get nook from context
+	db, err := handleGettingNookFromContext(w, r)
 	if err != nil {
 		return
 	}
 
 	// create artist
-	err = chinook.Create(&artist).Error
+	err = db.Create(&artist).Error
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte(fmt.Errorf("failed to create artist: %w", err).Error()))
@@ -118,15 +118,15 @@ func handlePatchArtist(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// get chinook from context
-	chinook, err := handleGettingChinookFromContext(w, r)
+	// get nook from context
+	db, err := handleGettingNookFromContext(w, r)
 	if err != nil {
 		return
 	}
 
 	// get artist
 	artist := model.Artist{ArtistID: int32(id)}
-	err = chinook.First(&artist).Error
+	err = db.First(&artist).Error
 	if errors.Is(err, gorm.ErrRecordNotFound) {
 		w.WriteHeader(http.StatusNotFound)
 		w.Write([]byte(fmt.Errorf("artist with id %d not found", id).Error()))
@@ -146,7 +146,7 @@ func handlePatchArtist(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// update artist
-	err = chinook.Save(&artist).Error
+	err = db.Save(&artist).Error
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte(fmt.Errorf("failed to update artist: %w", err).Error()))
@@ -173,15 +173,15 @@ func handleDeleteArtist(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// get chinook from context
-	chinook, err := handleGettingChinookFromContext(w, r)
+	// get nook from context
+	db, err := handleGettingNookFromContext(w, r)
 	if err != nil {
 		return
 	}
 
 	// get artist
 	artist := model.Artist{ArtistID: int32(id)}
-	err = chinook.First(&artist).Error
+	err = db.First(&artist).Error
 	if errors.Is(err, gorm.ErrRecordNotFound) {
 		w.WriteHeader(http.StatusNotFound)
 		w.Write([]byte(fmt.Errorf("artist with id %d not found", id).Error()))
@@ -193,7 +193,7 @@ func handleDeleteArtist(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// delete artist
-	err = chinook.Delete(&artist).Error
+	err = db.Delete(&artist).Error
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte(fmt.Errorf("failed to delete artist: %w", err).Error()))

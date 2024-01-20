@@ -12,15 +12,15 @@ import (
 )
 
 func handleGetEmployees(w http.ResponseWriter, r *http.Request) {
-	// get chinook from context
-	chinook, err := handleGettingChinookFromContext(w, r)
+	// get nook from context
+	db, err := handleGettingNookFromContext(w, r)
 	if err != nil {
 		return
 	}
 
 	// get employees from database
 	employees := []model.Employee{}
-	err = chinook.Find(&employees).Error
+	err = db.Find(&employees).Error
 	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte(fmt.Errorf("failed to get employees\n%w", err).Error()))
@@ -38,15 +38,15 @@ func handleGetEmployee(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// get chinook from context
-	chinook, err := handleGettingChinookFromContext(w, r)
+	// get nook from context
+	db, err := handleGettingNookFromContext(w, r)
 	if err != nil {
 		return
 	}
 
 	// get employee from database
 	employee := model.Employee{EmployeeID: int32(id)}
-	err = chinook.First(&employee).Error
+	err = db.First(&employee).Error
 	if errors.Is(err, gorm.ErrRecordNotFound) {
 		w.WriteHeader(http.StatusNotFound)
 		w.Write([]byte(fmt.Sprintf("employee %d not found", id)))
@@ -70,14 +70,14 @@ func handleCreateEmployee(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// get chinook from context
-	chinook, err := handleGettingChinookFromContext(w, r)
+	// get nook from context
+	db, err := handleGettingNookFromContext(w, r)
 	if err != nil {
 		return
 	}
 
 	// create employee
-	if err = chinook.Create(&employee).Error; err != nil {
+	if err = db.Create(&employee).Error; err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte(fmt.Errorf("failed to create employee\n%w", err).Error()))
 		return
@@ -94,15 +94,15 @@ func handlePatchEmployee(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// get chinook from context
-	chinook, err := handleGettingChinookFromContext(w, r)
+	// get nook from context
+	db, err := handleGettingNookFromContext(w, r)
 	if err != nil {
 		return
 	}
 
 	// get employee
 	employee := model.Employee{EmployeeID: int32(id)}
-	if err = chinook.First(&employee).Error; errors.Is(err, gorm.ErrRecordNotFound) {
+	if err = db.First(&employee).Error; errors.Is(err, gorm.ErrRecordNotFound) {
 		w.WriteHeader(http.StatusNotFound)
 		w.Write([]byte(fmt.Sprintf("employee %d not found", id)))
 		return
@@ -121,7 +121,7 @@ func handlePatchEmployee(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// patch employee
-	if err = chinook.Model(&employee).Updates(patch).Error; err != nil {
+	if err = db.Model(&employee).Updates(patch).Error; err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte(fmt.Errorf("failed to patch employee\n%w", err).Error()))
 		return
@@ -138,15 +138,15 @@ func handleDeleteEmployee(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// get chinook from context
-	chinook, err := handleGettingChinookFromContext(w, r)
+	// get nook from context
+	db, err := handleGettingNookFromContext(w, r)
 	if err != nil {
 		return
 	}
 
 	// get employee
 	employee := model.Employee{EmployeeID: int32(id)}
-	if err = chinook.First(&employee).Error; errors.Is(err, gorm.ErrRecordNotFound) {
+	if err = db.First(&employee).Error; errors.Is(err, gorm.ErrRecordNotFound) {
 		w.WriteHeader(http.StatusNotFound)
 		w.Write([]byte(fmt.Sprintf("employee %d not found", id)))
 		return
@@ -157,7 +157,7 @@ func handleDeleteEmployee(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// delete employee
-	if err = chinook.Delete(&employee).Error; err != nil {
+	if err = db.Delete(&employee).Error; err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte(fmt.Errorf("failed to delete employee\n%w", err).Error()))
 		return
