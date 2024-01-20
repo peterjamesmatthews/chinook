@@ -10,7 +10,7 @@ import (
 	"github.com/gorilla/mux"
 	"gorm.io/gorm"
 
-	"pjm.dev/chin/internal/db/model"
+	"pjm.dev/chin/internal/nook/model"
 )
 
 func handleGetArtists(w http.ResponseWriter, r *http.Request) {

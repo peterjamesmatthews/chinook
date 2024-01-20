@@ -6,8 +6,8 @@ import (
 
 	"github.com/gorilla/mux"
 
-	"pjm.dev/chin/internal/db"
 	"pjm.dev/chin/internal/handlers"
+	"pjm.dev/chin/internal/nook"
 )
 
 func main() {
@@ -18,13 +18,13 @@ func main() {
 	handlers.RegisterChinookRoutes(router)
 
 	// get dsn that connects to chinook database
-	dsn, err := db.GetDSN()
+	dsn, err := nook.GetDSN()
 	if err != nil {
 		log.Fatalf("failed to get dsn\n%v", err)
 	}
 
 	// get a chinook database connection
-	chinook, err := db.GetMySQL(dsn)
+	chinook, err := nook.GetMySQL(dsn)
 	if err != nil {
 		log.Fatalf("failed to get chinook database\n%v", err)
 	}

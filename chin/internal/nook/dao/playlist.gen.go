@@ -16,7 +16,7 @@ import (
 
 	"gorm.io/plugin/dbresolver"
 
-	"pjm.dev/chin/internal/db/model"
+	"pjm.dev/chin/internal/nook/model"
 )
 
 func newPlaylist(db *gorm.DB, opts ...gen.DOOption) playlist {

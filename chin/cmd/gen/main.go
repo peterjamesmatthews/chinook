@@ -5,7 +5,7 @@ import (
 
 	"gorm.io/gen"
 
-	"pjm.dev/chin/internal/db"
+	"pjm.dev/chin/internal/nook"
 )
 
 func main() {
@@ -16,12 +16,12 @@ func main() {
 			gen.WithQueryInterface,
 	})
 
-	dsn, err := db.GetDSN()
+	dsn, err := nook.GetDSN()
 	if err != nil {
 		log.Fatalf("failed to get dsn\n%v", err)
 	}
 
-	db, err := db.GetMySQL(dsn)
+	db, err := nook.GetMySQL(dsn)
 	if err != nil {
 		log.Fatal(err)
 	}

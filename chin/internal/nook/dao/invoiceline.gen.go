@@ -16,7 +16,7 @@ import (
 
 	"gorm.io/plugin/dbresolver"
 
-	"pjm.dev/chin/internal/db/model"
+	"pjm.dev/chin/internal/nook/model"
 )
 
 func newInvoiceLine(db *gorm.DB, opts ...gen.DOOption) invoiceLine {

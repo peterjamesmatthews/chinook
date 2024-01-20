@@ -1,4 +1,4 @@
-package db
+package nook
 
 import (
 	"gorm.io/driver/sqlite"
@@ -10,7 +10,7 @@ import (
 //
 // gorm logs are disabled.
 func GetSQLite(dsn string) (*gorm.DB, error) {
-	chinook, err := gorm.Open(
+	db, err := gorm.Open(
 		sqlite.Open(dsn),
 		&gorm.Config{
 			Logger: logger.Default.LogMode(logger.Silent), // disable logging
@@ -20,5 +20,5 @@ func GetSQLite(dsn string) (*gorm.DB, error) {
 		return nil, err
 	}
 
-	return chinook, nil
+	return db, nil
 }

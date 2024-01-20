@@ -8,8 +8,8 @@ import (
 	"strings"
 	"testing"
 
-	"pjm.dev/chin/internal/db/model"
 	"pjm.dev/chin/internal/handlers"
+	"pjm.dev/chin/internal/nook/model"
 )
 
 func TestGetGenres(t *testing.T) {

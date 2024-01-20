@@ -8,7 +8,7 @@ import (
 
 	"gorm.io/gorm"
 
-	"pjm.dev/chin/internal/db/model"
+	"pjm.dev/chin/internal/nook/model"
 )
 
 func handleGetGenres(w http.ResponseWriter, r *http.Request) {

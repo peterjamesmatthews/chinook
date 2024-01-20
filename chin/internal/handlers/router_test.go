@@ -8,8 +8,8 @@ import (
 	"gorm.io/gorm"
 
 	"pjm.dev/chin/internal/crow"
-	"pjm.dev/chin/internal/db"
 	"pjm.dev/chin/internal/handlers"
+	"pjm.dev/chin/internal/nook"
 	"pjm.dev/chin/test"
 )
 
@@ -36,7 +36,7 @@ func getTestHandler(t *testing.T) http.Handler {
 		defer seed.Close()
 
 		var err error
-		testChinook, err = db.GetSQLite(seed.Name())
+		testChinook, err = nook.GetSQLite(seed.Name())
 		if err != nil {
 			t.Fatalf("failed to seed testChinook: %v", err)
 		}
@@ -77,7 +77,7 @@ func getCrowHandler(t *testing.T) (http.Handler, *crow.Crow) {
 
 	if unseededTestChinook == nil {
 		var err error
-		unseededTestChinook, err = db.GetSQLite(":memory:")
+		unseededTestChinook, err = nook.GetSQLite(":memory:")
 		if err != nil {
 			t.Fatalf("failed to get in-memory sqlite db: %v", err)
 		}
